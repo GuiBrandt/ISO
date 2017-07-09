@@ -13,7 +13,7 @@ GameWindow::GameWindow(void)
 
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    _glfwWindowHandle = glfwCreateWindow(
+    _glfwWindow = glfwCreateWindow(
         ISO_WINDOW_WIDTH,
         ISO_WINDOW_HEIGHT,
         "",
@@ -21,13 +21,13 @@ GameWindow::GameWindow(void)
         NULL
     );
 
-    if (!_glfwWindowHandle)
+    if (!_glfwWindow)
     {
         glfwTerminate();
         throw -2;
     }
 
-    glfwMakeContextCurrent(_glfwWindowHandle);
+    glfwMakeContextCurrent(_glfwWindow);
 }
 
 /// <summary>
@@ -44,7 +44,7 @@ GameWindow::~GameWindow(void)
 /// <returns>True de o usuário tiver fechado a janela, false de não</returns>
 bool GameWindow::shouldClose(void)
 {
-    return glfwWindowShouldClose(_glfwWindowHandle);
+    return glfwWindowShouldClose(_glfwWindow);
 }
 
 /// <summary>
@@ -52,9 +52,50 @@ bool GameWindow::shouldClose(void)
 /// </summary>
 void GameWindow::update(void)
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glfwSwapBuffers(_glfwWindowHandle);
+	glClearColor(_backgroundColor.red, _backgroundColor.green, _backgroundColor.blue, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glfwSwapBuffers(_glfwWindow);
     glfwPollEvents();
+}
+
+/// <summary>
+/// Obtém a posição da janela
+/// </summary>
+/// <returns>Uma struct para a posição da janela</returns>
+point2i GameWindow::getPosition(void)
+{
+	point2i p;
+	glfwGetWindowPos(_glfwWindow, &p.x, &p.y);
+
+	return p;
+}
+
+/// <summary>
+/// Define a posição da janela para um ponto
+/// </summary>
+/// <param name="x">Posição X para a janela</param>
+/// <param name="y">Posição Y para a janela</param>
+void GameWindow::setPosition(int x, int y)
+{
+	glfwSetWindowPos(_glfwWindow, x, y);
+}
+
+/// <summary>
+/// Define a cor de fundo da janela
+/// </summary>
+/// <param name="color">Cor com a qual o fundo da tela será pintado</param>
+void GameWindow::setBgColor(RGB color)
+{
+	_backgroundColor = color;
+}
+
+/// <summary>
+/// Define o título da janela
+/// </summary>
+/// <param name="title">Título a ser atribuído à janela</param>
+void GameWindow::setTitle(const char *title)
+{
+	glfwSetWindowTitle(_glfwWindow, title);
 }
 
 };

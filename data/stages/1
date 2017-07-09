@@ -1,0 +1,50 @@
+#
+# Mapa 1
+#
+
+# Tamanho do mapa (X Y Z)
+10 10 2
+
+# Cor de fundo (Hex)
+000000
+
+# Cor do jogador (Hex)
+000000
+
+# Cor das luzes ambiente, difusa e especular (Hex)
+ffffff, ffffff, ffffff
+
+# Posição da fonte de luz (X Y Z)
+0 0 0
+
+# Tiles
+x W ffffff, 0 F ffffff
+
+# Eventos
+5 5 0 event1 ff0000
+
+# Mapa
+0 0 0
+xxxxxxxxxx
+x00000000x
+x00000000x
+x00000000x
+x00000000x
+x00000000x
+x00000000x
+x00000000x
+x00000000x
+xxxxxxxxxx
+$
+0 0 1
+xxxxxxxxxx
+x        x
+x        x
+x        x
+x        x
+x        x
+x        x
+x        x
+x        x
+xxxxxxxxxx
+$$

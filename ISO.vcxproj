@@ -78,6 +78,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\5 - Utils\glfw-3.2.1\include;$(ProjectDir)src\include;</AdditionalIncludeDirectories>
+      <AdditionalOptions>/NODEFAULTLIB:MSVCRT %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(ProjectDir)..\..\5 - Utils\glfw-3.2.1\lib-vc2015\glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
