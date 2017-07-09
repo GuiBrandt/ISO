@@ -11,7 +11,7 @@ int main(void)
 	{
 		GameWindow window;
     
-
+		Game::initialize();
 		Input::initialize();
 		Audio::initialize();
 

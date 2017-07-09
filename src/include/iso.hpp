@@ -153,6 +153,9 @@ namespace Iso
 			const char* _params;
 
 		public:
+			EventCommand(const char*);
+			~EventCommand(void);
+
 			const char* getCode(void);
 			void execute(void);
 	};
@@ -166,15 +169,15 @@ namespace Iso
 			std::vector<EventCommand> _commands;
 			RGB _color;
 
+			void loadCommands(const char*);
+
 		public:
 			Event(const char*, RGB);
-
-			~Event(void);
 
 			void start(void);
 
 			RGB getColor(void);
-			RGB setColor(RGB);
+			void setColor(RGB);
 	};
 
 	/// <summary>
@@ -201,7 +204,7 @@ namespace Iso
 
 			void render(void);
 			bool isPassable(int, int, int);
-			Event eventAt(int, int, int);
+			Event* eventAt(int, int, int);
 	};
 
 	/// <summary>
@@ -212,17 +215,17 @@ namespace Iso
 		private:
 			static Player _player;
 			static Stage _currentStage;
-			static Event _currentEvent;
+			static Event* _currentEvent;
 
 		public:
 			static void initialize();
 			
-			static Player getPlayer();
+			static Player* getPlayer();
 
-			static Stage getCurrentStage();
-			static void nextStage();
+			static Stage* getCurrentStage();
+			static void changeStage(const char*);
 
-			static Event getCurrentEvent();
-			static void setCurrentEvent(Event);
+			static Event* getCurrentEvent();
+			static void setCurrentEvent(Event*);
 	};
 };
