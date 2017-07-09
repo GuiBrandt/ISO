@@ -31,7 +31,7 @@ namespace Iso
 		string line;
 
 		while (getline(in, line))
-			_commands.push_back(EventCommand(line.c_str()));
+			_commands.push_back(new EventCommand(line.c_str()));
 	}
 
 	/// <summary>
@@ -58,7 +58,7 @@ namespace Iso
 	{
 		Game::setCurrentEvent(this);
 		
-		for each (EventCommand command in _commands)
-			command.execute();
+		for each (EventCommand* command in _commands)
+			command->execute();
 	}
 };

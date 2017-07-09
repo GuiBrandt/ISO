@@ -108,7 +108,7 @@ namespace Iso
 			int color;
 			sscanf_s(line.c_str(), "%d %d %d %255[^ ] %x", &x, &y, &z, name, 256, &color);
 
-			_events.insert_or_assign(point3i { x, y, z }, Event(name, hexToRGB(color)));
+			_events.insert_or_assign(point3i { x, y, z }, new Event(name, hexToRGB(color)));
 
 			do getline(f, line);
 			while (!(isalnum(line[0]) || line[0] == '$'));
@@ -133,10 +133,10 @@ namespace Iso
 	/// <summary>
 	/// Verifica se uma posição é passável
 	/// </summary>
-	/// <param name="x"></param>
-	/// <param name="y"></param>
-	/// <param name="z"></param>
-	/// <returns></returns>
+	/// <param name="x">X da posição</param>
+	/// <param name="y">Y da posição</param>
+	/// <param name="z">Z da posição</param>
+	/// <returns>Verdadeiro se for e falso se não</returns>
 	bool Stage::isPassable(int x, int y, int z)
 	{
 		return false;
@@ -155,7 +155,7 @@ namespace Iso
 
 		for each (auto pair in _events)
 			if (pair.first.x == x && pair.first.y == y && pair.first.z == z)
-				ev = &pair.second;
+				ev = pair.second;
 
 		return ev;
 	}

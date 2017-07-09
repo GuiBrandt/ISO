@@ -35,18 +35,6 @@ namespace Iso
 	}
 
 	/// <summary>
-	/// Destrutor
-	/// </summary>
-	EventCommand::~EventCommand()
-	{
-		/*if (_code)
-			delete _code;
-
-		if (_params)
-			delete _params;*/
-	}
-
-	/// <summary>
 	/// Obtém o código do comando
 	/// </summary>
 	/// <returns>O nome do comando</returns>

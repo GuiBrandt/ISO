@@ -101,8 +101,8 @@ namespace Iso
 	/// </summary>
 	enum TileType
 	{
-		Wall,
-		Floor
+		Wall  = 0,
+		Floor = 1
 	};
 
 	/// <summary>
@@ -158,7 +158,6 @@ namespace Iso
 
 		public:
 			EventCommand(const char*);
-			~EventCommand(void);
 
 			const char* getCode(void);
 			void execute(void);
@@ -170,7 +169,7 @@ namespace Iso
 	class Event : public GameObject
 	{
 		private:
-			std::vector<EventCommand> _commands;
+			std::vector<EventCommand*> _commands;
 			RGB _color;
 
 			void loadCommands(const char*);
@@ -204,7 +203,7 @@ namespace Iso
 			point3f _lightOrigin;
 
 			std::map<char, Tile> _tiles;
-			std::map<point3i, Event> _events;
+			std::map<point3i, Event*> _events;
 
 			MapLayer* _layers;
 
