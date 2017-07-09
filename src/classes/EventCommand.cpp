@@ -16,21 +16,21 @@ namespace Iso
 
 		// Comentários e linhas em branco
 		if (strlen(command) == 0 || command[0] == '#')
-		{
 			_code = "doNothing";
-		}
 		else
 		{
-			char* code = (char*)malloc(256);
 			int index = strchr(command, ' ') - command;
 
-			if (index < 0)
-				throw - 1;
+			if (index > 0)
+			{
+				char* code = (char*)calloc(256, sizeof(char));
+				strncat_s(code, 256, command, index);
 
-			strncat_s(code, 256, command, index);
-
-			_code = code;
-			_params = command + index;
+				_code = code;
+				_params = command + index;
+			}
+			else
+				_code = command;
 		}
 	}
 
@@ -39,11 +39,11 @@ namespace Iso
 	/// </summary>
 	EventCommand::~EventCommand()
 	{
-		if (_code)
+		/*if (_code)
 			delete _code;
 
 		if (_params)
-			delete _params;
+			delete _params;*/
 	}
 
 	/// <summary>

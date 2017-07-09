@@ -28,6 +28,10 @@ struct point3i {
 	int x;
 	int y;
 	int z;
+
+	bool operator<(const point3i &o) const {
+		return x < o.x || (x == o.x && y < o.y) || (x == o.x && y == o.y && z < o.z);
+	}
 };
 
 /// <summary>
@@ -192,6 +196,12 @@ namespace Iso
 
 			RGB _bgColor;
 			RGB _playerColor;
+
+			RGB _ambientLightColor;
+			RGB _diffuseLightColor;
+			RGB _specularLightColor;
+
+			point3f _lightOrigin;
 
 			std::map<char, Tile> _tiles;
 			std::map<point3i, Event> _events;
