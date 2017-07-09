@@ -2,14 +2,14 @@
 # Mapa 1
 #
 
-# Tamanho do mapa (X Y Z)
-10 10 2
+# Tamanho do mapa (X Y)
+10 10
 
 # Cor de fundo (Hex)
 000000
 
 # Cor do jogador (Hex)
-000000
+ffffff
 
 # Cor das luzes ambiente, difusa e especular (Hex)
 ffffff

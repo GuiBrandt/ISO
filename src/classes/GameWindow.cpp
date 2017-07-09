@@ -27,6 +27,16 @@ namespace Iso
 		}
 
 		glfwMakeContextCurrent(_glfwWindow);
+
+		glViewport(0, 0, ISO_WINDOW_HEIGHT, ISO_WINDOW_HEIGHT);
+
+		glEnable(GL_DEPTH_TEST);
+
+		glEnable(GL_NORMALIZE);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+
+		glEnable(GL_COLOR_MATERIAL);
 	}
 
 	/// <summary>
@@ -46,6 +56,8 @@ namespace Iso
 		return glfwWindowShouldClose(_glfwWindow);
 	}
 
+	int c = 0;
+
 	/// <summary>
 	/// Atualiza a janela do jogo
 	/// </summary>
@@ -53,6 +65,33 @@ namespace Iso
 	{
 		glClearColor(_backgroundColor.red, _backgroundColor.green, _backgroundColor.blue, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glPushMatrix();
+		glLoadIdentity();
+		glScalef(0.25, 0.25, 0.25);
+
+		glTranslatef(-.5, 0, 0);
+
+		glTranslatef(0.5, 0.5, -0.5);
+		glRotatef(c++, 1, 1, 1);
+		glTranslatef(-0.5, -0.5, 0.5);
+
+		Game::getCurrentStage()->render();
+
+		glPopMatrix();
+
+		// Create light components
+		GLfloat ambientLight[] = { .1, .1, .1, 1 };
+		GLfloat diffuseLight[] = { 1, 1, 1, 1 };
+		GLfloat specularLight[] = { .5, .5, .5, 1 };
+		GLfloat position[] = { 0, 0, 0, 2 };
+
+		// Assign created components to GL_LIGHT0
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+		glLightfv(GL_LIGHT0, GL_POSITION, position);
+
 		glfwSwapBuffers(_glfwWindow);
 		glfwPollEvents();
 	}

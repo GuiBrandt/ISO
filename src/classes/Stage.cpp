@@ -1,4 +1,6 @@
 #include <iso.hpp>
+#include <Models.hpp>
+
 #include <fstream>
 #include <string>
 #include <ctype.h>
@@ -51,16 +53,17 @@ namespace Iso
 		ifstream f(fname);
 		string line;
 
+		int x, y, z;
+		GLfloat fx, fy, fz;
+
 		// Tamanho do mapa
 		do getline(f, line);
 		while (!isdigit(line[0]));
 
-		int x, y, z;
-		sscanf_s(line.c_str(), "%d %d %d", &x, &y, &z);
+		sscanf_s(line.c_str(), "%d %d", &x, &y);
 
 		_xSize = x;
 		_ySize = y;
-		_zSize = z;
 
 		// Cor de fundo
 		_bgColor = readHexColor(f);
@@ -76,8 +79,6 @@ namespace Iso
 		// Posição das luzes
 		do getline(f, line);
 		while (!isdigit(line[0]));
-
-		GLfloat fx, fy, fz;
 
 		sscanf_s(line.c_str(), "%f %f %f", &fx, &fy, &fz);
 		
@@ -100,7 +101,7 @@ namespace Iso
 
 		// Eventos
 		do getline(f, line);
-		while (!isalnum(line[0]));
+		while (!isdigit(line[0]));
 
 		do {
 			char name[256];
@@ -113,6 +114,33 @@ namespace Iso
 			do getline(f, line);
 			while (!(isalnum(line[0]) || line[0] == '$'));
 		} while (line[0] != '$');
+
+		// Mapa
+		do getline(f, line);
+		while (!isdigit(line[0]));
+
+		do {
+			sscanf_s(line.c_str(), "%f %f %f", &fx, &fy, &fz);
+
+			MapLayer layer;
+			layer.originX = fx;
+			layer.originY = fy;
+			layer.originZ = fz;
+			layer.map = (char*)malloc(_xSize * _ySize + 1);
+			memset(layer.map, 0, _xSize * _ySize + 1);
+
+			const char* row = line.c_str();
+
+			for (int i = 0; i < _ySize; i++)
+			{
+				getline(f, line);
+				memcpy_s(layer.map + i * _xSize, _xSize * _ySize, row, strlen(row));
+			}
+
+			_layers.push_back(layer);
+
+			getline(f, line);
+		} while (line[0] != '$');
 	}
 
 	/// <summary>
@@ -120,7 +148,32 @@ namespace Iso
 	/// </summary>
 	Stage::~Stage()
 	{
-		delete [] _layers;
+		for each (MapLayer layer in _layers)
+			delete layer.map;
+	}
+
+	/// <summary>
+	/// Renderiza um modelo em uma posição
+	/// </summary>
+	/// <param name="model">Modelo a ser desenhado</param>
+	/// <param name="vertexCount">Número de vértices do modelo</param>
+	/// <param name="color">Cor do modelo</param>
+	/// <param name="position">Posição</param>
+	/// <param name="mode">Modo de renderização</param>
+	void renderModel(const GLfloat* model, int vertexCount, RGB color, point3f position, GLenum mode = GL_TRIANGLES)
+	{
+		glPushMatrix();
+		glTranslatef(position.x, position.y, position.z);
+
+		glColor3fv((float*)&color);
+		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 0, model);
+		glDrawArrays(mode, 0, vertexCount);
+		glDisableClientState(GL_VERTEX_ARRAY);
+
+		glPopMatrix();
 	}
 
 	/// <summary>
@@ -128,6 +181,15 @@ namespace Iso
 	/// </summary>
 	void Stage::render(void)
 	{
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+
+		// Jogador
+		renderModel(Models::PLAYER, 24, _playerColor, Game::getPlayer()->getPosition(), GL_QUADS);
+
+		renderModel(Models::PLAYER, 24, _playerColor, point3f { 0, 0, -2 }, GL_QUADS);
+		
+		glPopMatrix();
 	}
 
 	/// <summary>

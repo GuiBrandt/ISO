@@ -6,7 +6,7 @@
 /// <summary>
 /// Largura da janela do jogo
 /// </summary>
-#define ISO_WINDOW_WIDTH 640
+#define ISO_WINDOW_WIDTH 480
 
 /// <summary>
 /// Altura da janela do jogo
@@ -119,9 +119,9 @@ namespace Iso
 	/// </summary>
 	struct MapLayer
 	{
-		int originX;
-		int originY;
-		int originZ;
+		GLfloat originX;
+		GLfloat originY;
+		GLfloat originZ;
 
 		char* map;
 	};
@@ -139,6 +139,16 @@ namespace Iso
 		public:
 			point3f getPosition(void);
 			void move(GLfloat, GLfloat, GLfloat);
+	};
+
+	/// <summary>
+	/// Classe para os modelos 3D do jogo
+	/// </summary>
+	class Models {
+		public:
+			static const float PLAYER[];
+			static const float FLOOR[];
+			static const float WALL[];
 	};
 
 	/// <summary>
@@ -191,7 +201,6 @@ namespace Iso
 		private:
 			int _xSize;
 			int _ySize;
-			int _zSize;
 
 			RGB _bgColor;
 			RGB _playerColor;
@@ -205,7 +214,7 @@ namespace Iso
 			std::map<char, Tile> _tiles;
 			std::map<point3i, Event*> _events;
 
-			MapLayer* _layers;
+			std::vector<MapLayer> _layers;
 
 		public:
 			Stage(const char*);

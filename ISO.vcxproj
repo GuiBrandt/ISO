@@ -120,6 +120,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\include\iso.hpp" />
+    <ClInclude Include="src\include\Models.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\classes\Audio.cpp" />
@@ -129,6 +130,7 @@
     <ClCompile Include="src\classes\GameObject.cpp" />
     <ClCompile Include="src\classes\GameWindow.cpp" />
     <ClCompile Include="src\classes\Input.cpp" />
+    <ClCompile Include="src\classes\Models.cpp" />
     <ClCompile Include="src\classes\Stage.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>

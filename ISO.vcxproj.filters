@@ -21,6 +21,9 @@
     <ClInclude Include="src\include\iso.hpp">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
+    <ClInclude Include="src\include\Models.hpp">
+      <Filter>Arquivos de Cabeçalho</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -48,6 +51,9 @@
       <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
     <ClCompile Include="src\classes\Stage.cpp">
+      <Filter>Arquivos de Origem\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Models.cpp">
       <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
   </ItemGroup>
