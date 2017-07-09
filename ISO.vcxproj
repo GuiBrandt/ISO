@@ -122,15 +122,15 @@
     <ClInclude Include="src\include\iso.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Event.cpp" />
-    <ClCompile Include="EventCommand.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="src\classes\Audio.cpp" />
+    <ClCompile Include="src\classes\Event.cpp" />
+    <ClCompile Include="src\classes\EventCommand.cpp" />
+    <ClCompile Include="src\classes\Game.cpp" />
+    <ClCompile Include="src\classes\GameObject.cpp" />
     <ClCompile Include="src\classes\GameWindow.cpp" />
     <ClCompile Include="src\classes\Input.cpp" />
+    <ClCompile Include="src\classes\Stage.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="Stage.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

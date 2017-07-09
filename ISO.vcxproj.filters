@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Arquivos de Origem\classes">
+      <UniqueIdentifier>{0345c6d8-b688-4cdb-a263-a0b3af7f3cff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\iso.hpp">
@@ -23,29 +26,29 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Arquivos de Origem</Filter>
     </ClCompile>
-    <ClCompile Include="src\classes\Audio.cpp">
-      <Filter>Arquivos de Origem</Filter>
-    </ClCompile>
     <ClCompile Include="src\classes\GameWindow.cpp">
-      <Filter>Arquivos de Origem</Filter>
+      <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
     <ClCompile Include="src\classes\Input.cpp">
-      <Filter>Arquivos de Origem</Filter>
+      <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Arquivos de Origem</Filter>
+    <ClCompile Include="src\classes\Audio.cpp">
+      <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
-    <ClCompile Include="EventCommand.cpp">
-      <Filter>Arquivos de Origem</Filter>
+    <ClCompile Include="src\classes\Event.cpp">
+      <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
-    <ClCompile Include="Event.cpp">
-      <Filter>Arquivos de Origem</Filter>
+    <ClCompile Include="src\classes\EventCommand.cpp">
+      <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Arquivos de Origem</Filter>
+    <ClCompile Include="src\classes\Game.cpp">
+      <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
-    <ClCompile Include="Stage.cpp">
-      <Filter>Arquivos de Origem</Filter>
+    <ClCompile Include="src\classes\GameObject.cpp">
+      <Filter>Arquivos de Origem\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Stage.cpp">
+      <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
