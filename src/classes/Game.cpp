@@ -22,6 +22,7 @@ namespace Iso
 	/// </summary>
 	void Game::initialize()
 	{
+		_player.move(2, 2, 0);
 		// TODO
 	}
 

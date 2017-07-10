@@ -11,7 +11,8 @@ namespace Iso
 			throw -1;
 
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
+		glfwWindowHint(GLFW_SAMPLES, 4);
+		
 		_glfwWindow = glfwCreateWindow(
 			ISO_WINDOW_WIDTH,
 			ISO_WINDOW_HEIGHT,
@@ -31,10 +32,22 @@ namespace Iso
 		glViewport(0, 0, ISO_WINDOW_HEIGHT, ISO_WINDOW_HEIGHT);
 
 		glEnable(GL_DEPTH_TEST);
-		glShadeModel(GL_FLAT);
 
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
+
+		// Iluminação
+		GLfloat ambientLight[] = { 0, 0, 0, 1 };
+		GLfloat diffuseLight[] = { .1, .1, .1, .1 };
+		//GLfloat position[] = { -.05, .7, -.9, 1 };
+		GLfloat position[] = { -.1, .5, -1, 0 };
+
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+		glLightfv(GL_LIGHT0, GL_POSITION, position);
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
 
 		glEnable(GL_COLOR_MATERIAL);
 	}
@@ -66,27 +79,14 @@ namespace Iso
 		glClearColor(_backgroundColor.red, _backgroundColor.green, _backgroundColor.blue, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Create light components
-		GLfloat ambientLight[] = { .1, .1, .1, 1 };
-		GLfloat diffuseLight[] = { .2, .2, .2, .2 };
-		GLfloat specularLight[] = { .5, .5, .5, 1 };
-		GLfloat position[] = { 0, 0, -2, 1 };
-
-		// Assign created components to GL_LIGHT0
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-		glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
-		glLightfv(GL_LIGHT0, GL_POSITION, position);
-
 		glPushMatrix();
 		glLoadIdentity();
-		glScalef(0.25, 0.25, 0.25);
 
-		glTranslatef(-.5, 0, 0);
+		glScalef(.05, -.05, .05);
+		//glTranslatef(-.5, 0, 0);
 
-		glTranslatef(0.5, 0.5, -0.5);
-		glRotatef(c++, 1, 1, 1);
-		glTranslatef(-0.5, -0.5, 0.5);
+		glRotatef(45.264f, -1, 0, 0);
+		glRotatef(45, 0, 0, 1);
 
 		Game::getCurrentStage()->render();
 

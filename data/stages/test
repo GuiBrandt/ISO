@@ -9,7 +9,7 @@
 000000
 
 # Cor do jogador (Hex)
-ffffff
+333333
 
 # Cor das luzes ambiente, difusa e especular (Hex)
 ffffff
@@ -21,7 +21,7 @@ ffffff
 
 # Tiles
 x 0 ffffff
-0 1 ffffff
+0 1 6a6a6a
 $
 
 # Eventos
@@ -41,6 +41,17 @@ x00000000x
 x00000000x
 xxxxxxxxxx
 0 0 1
+xxxxxxxxxx
+x        x
+x        x
+x        x
+x        x
+x        x
+x        x
+x        x
+x        x
+xxxxxxxxxx
+0 0 2
 xxxxxxxxxx
 x        x
 x        x

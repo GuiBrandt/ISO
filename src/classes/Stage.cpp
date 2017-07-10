@@ -168,14 +168,9 @@ namespace Iso
 		glColor3fv((float*)&color);
 		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_NORMAL_ARRAY);
 		glVertexPointer(3, GL_FLOAT, 6 * sizeof(float), model);
 		glNormalPointer(GL_FLOAT, 6 * sizeof(float), &model[3]);
 		glDrawArrays(mode, 0, vertexCount);
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_NORMAL_ARRAY);
-
 		glPopMatrix();
 	}
 
@@ -190,6 +185,35 @@ namespace Iso
 		// Jogador
 		renderModel(Models::PLAYER, 24, _playerColor, Game::getPlayer()->getPosition(), GL_QUADS);
 		
+		// Mapa
+		for (unsigned int i = 0; i < _layers.size(); i++)
+		{
+			MapLayer layer = _layers[i];
+			int z = -layer.originZ;
+
+			for (int x = 0; x < _xSize; x++)
+			for (int y = 0; y < _ySize; y++)
+			{
+				char tile = layer.map[y * _xSize + x];
+
+				if (!_tiles.count(tile))
+					continue;
+
+				Tile t = _tiles[tile];
+				
+				switch (t.type)
+				{
+					case TileType::Floor:
+						renderModel(Models::FLOOR, 4, t.color, point3f { (float)x, (float)y, (float)z }, GL_QUADS);
+						break;
+
+					case TileType::Wall:
+						renderModel(Models::WALL, 24, t.color, point3f { (float)x, (float)y, (float)z }, GL_QUADS);
+						break;
+				}
+			}
+		}
+
 		glPopMatrix();
 	}
 
