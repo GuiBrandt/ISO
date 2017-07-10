@@ -22,6 +22,15 @@ struct point2i {
 };
 
 /// <summary>
+/// Estrutura para um ponto 2D
+/// </summary>
+struct point2d
+{
+	double x;
+	double y;
+};
+
+/// <summary>
 /// Estrutura para um ponto 3D
 /// </summary>
 struct point3i {

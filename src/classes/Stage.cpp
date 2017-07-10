@@ -226,7 +226,26 @@ namespace Iso
 	/// <returns>Verdadeiro se for e falso se não</returns>
 	bool Stage::isPassable(int x, int y, int z)
 	{
-		return false;
+		for each (MapLayer layer in _layers)
+		{
+			if (z < layer.originZ)
+				if (floor(layer.originZ) != z)
+					continue;
+			else
+				if (ceil(layer.originZ) != z)
+					continue;
+
+			char tile = layer.map[y * _xSize + x];
+
+			if (!_tiles.count(tile))
+				continue;
+			Tile t = _tiles[tile];
+
+			if (t.type == Wall)
+				return false;
+		}
+
+		return true;
 	}
 
 	/// <summary>

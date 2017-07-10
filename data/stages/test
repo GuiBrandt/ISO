@@ -22,6 +22,12 @@ ffffff
 # Tiles
 x 0 ffffff
 0 1 6a6a6a
+r 0 ff0000
+g 0 00ff00
+b 0 0000ff
+y 0 ffff00
+c 0 00ffff
+p 0 ff00ff
 $
 
 # Eventos
@@ -33,7 +39,7 @@ $
 xxxxxxxxxx
 x00000000x
 x00000000x
-x00000000x
+x000r0000x
 x00000000x
 x00000000x
 x00000000x
@@ -44,7 +50,7 @@ xxxxxxxxxx
 xxxxxxxxxx
 x        x
 x        x
-x        x
+x   g    x
 x        x
 x        x
 x        x
@@ -55,11 +61,44 @@ xxxxxxxxxx
 xxxxxxxxxx
 x        x
 x        x
-x        x
+x   b    x
 x        x
 x        x
 x        x
 x        x
 x        x
 xxxxxxxxxx
+0 0 3
+
+
+
+    y
+
+
+
+
+
+
+0 0 4
+
+
+
+    c
+
+
+
+
+
+
+0 0 5
+
+
+
+    p
+
+
+
+
+
+
 $
