@@ -155,7 +155,7 @@ namespace Iso
 	/// </summary>
 	class Models {
 		public:
-			static const float PLAYER[];
+			static const float CHARACTER[];
 			static const float FLOOR[];
 			static const float WALL[];
 	};

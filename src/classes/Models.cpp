@@ -5,7 +5,7 @@ namespace Iso
 	/// <summary>
 	/// Modelo do jogador
 	/// </summary>
-	const float Models::PLAYER[] = {
+	const float Models::CHARACTER[] = {
 		0, 1, 0,	-1, 0, 0,
 		0, 1, -1,	-1, 0, 0,
 		0, 0, -1,	-1, 0, 0,

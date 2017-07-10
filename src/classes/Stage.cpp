@@ -183,7 +183,7 @@ namespace Iso
 		glPushMatrix();
 
 		// Jogador
-		renderModel(Models::PLAYER, 24, _playerColor, Game::getPlayer()->getPosition(), GL_QUADS);
+		renderModel(Models::CHARACTER, 24, _playerColor, Game::getPlayer()->getPosition(), GL_QUADS);
 		
 		// Mapa
 		for (unsigned int i = 0; i < _layers.size(); i++)
@@ -213,6 +213,10 @@ namespace Iso
 				}
 			}
 		}
+
+		// Eventos
+		for each (auto pair in _events)
+			renderModel(Models::CHARACTER, 24, pair.second->getColor(), point3f{ (float)pair.first.x, (float)pair.first.y, (float)pair.first.z }, GL_QUADS);
 
 		glPopMatrix();
 	}
@@ -244,6 +248,10 @@ namespace Iso
 			if (t.type == Wall)
 				return false;
 		}
+
+		for each (auto pair in _events)
+			if (pair.first.x == x && pair.first.y == y && pair.first.z == z)
+				return false;
 
 		return true;
 	}
