@@ -166,12 +166,15 @@ namespace Iso
 		glTranslatef(position.x, position.y, position.z);
 
 		glColor3fv((float*)&color);
-		glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+		glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, model);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glVertexPointer(3, GL_FLOAT, 6 * sizeof(float), model);
+		glNormalPointer(GL_FLOAT, 6 * sizeof(float), &model[3]);
 		glDrawArrays(mode, 0, vertexCount);
 		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
 
 		glPopMatrix();
 	}
@@ -186,8 +189,6 @@ namespace Iso
 
 		// Jogador
 		renderModel(Models::PLAYER, 24, _playerColor, Game::getPlayer()->getPosition(), GL_QUADS);
-
-		renderModel(Models::PLAYER, 24, _playerColor, point3f { 0, 0, -2 }, GL_QUADS);
 		
 		glPopMatrix();
 	}
