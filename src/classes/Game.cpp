@@ -28,19 +28,6 @@ namespace Iso
 	shiro_runtime* Game::_scriptRuntime;
 
 	/// <summary>
-	/// Muda o título da janela do jogo
-	/// </summary>
-	shiro_native(setTitle)
-	{
-		printf("asd");
-		shiro_push_arg_c(title, string, 0);
-
-		Game::getWindow()->setTitle(title);
-
-		return shiro_nil;
-	}
-
-	/// <summary>
 	/// Inicialização do módulo do jogo
 	/// </summary>
 	void Game::initialize()
@@ -49,7 +36,11 @@ namespace Iso
 		_scriptRuntime = shiro_init();
 
 		shiro_def_native(_scriptRuntime, setTitle, 1);
+		shiro_def_native(_scriptRuntime, show, 0);
+		shiro_def_native(_scriptRuntime, hide, 0);
+		shiro_def_native(_scriptRuntime, eventIsVisible, 0);
 
+		// Objetos do jogo
 		_window = new GameWindow();
 		_currentStage = new Stage("test");
 		_player.move(2, 2, 0);
@@ -126,10 +117,14 @@ namespace Iso
 	/// <param name="code">Código que será executado</param>
 	void Game::runScript(const char* code)
 	{
-		char* c = (char*)malloc(strlen(code) + 1);
+		char* c = (char*)calloc(strlen(code) + 1, sizeof(char));
 		memcpy_s(c, strlen(code) + 1, code, strlen(code));
 
 		shiro_binary* bin = shiro_compile(c);
-		shiro_execute(_scriptRuntime, bin);
+
+		if (bin != NULL)
+			shiro_execute(_scriptRuntime, bin);
+		else
+			fprintf(stderr, "%s\n", shiro_get_last_error());
 	}
 };

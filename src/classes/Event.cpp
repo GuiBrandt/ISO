@@ -28,6 +28,8 @@ namespace Iso
 		script._Copy_s(buffer, script.length() + 1, script.length());
 
 		_script = buffer;
+
+		show();
 	}
 
 	/// <summary>
@@ -63,4 +65,68 @@ namespace Iso
 		Game::setCurrentEvent(this);
 		Game::runScript(_script);
 	}
+
+	/// <summary>
+	/// Mostra o evento
+	/// </summary>
+	void Event::show()
+	{
+		_visible = true;
+	}
+
+	/// <summary>
+	/// Esconde o evento
+	/// </summary>
+	void Event::hide()
+	{
+		_visible = false;
+	}
+
+	/// <summary>
+	/// Verifica se o evento é visível
+	/// </summary>
+	/// <returns></returns>
+	bool Event::isVisible()
+	{
+		return _visible;
+	}
+
+	/// <summary>
+	/// Muda o título da janela do jogo
+	/// </summary>
+	shiro_native(setTitle)
+	{
+		shiro_push_arg_c(title, string, 0);
+
+		Game::getWindow()->setTitle(title);
+
+		return shiro_nil;
+	}
+
+	/// <summary>
+	/// Mostra o evento atual
+	/// </summary>
+	shiro_native(show)
+	{
+		Game::getCurrentEvent()->show();
+		return shiro_nil;
+	}
+
+	/// <summary>
+	/// Esconde o evento atual
+	/// </summary>
+	shiro_native(hide)
+	{
+		Game::getCurrentEvent()->hide();
+		return shiro_nil;
+	}
+
+	/// <summary>
+	/// Verifica se o evento atual está visível
+	/// </summary>
+	shiro_native(eventIsVisible)
+	{
+		return shiro_new_int(Game::getCurrentEvent()->isVisible());
+	}
+
 };

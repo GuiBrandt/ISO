@@ -13,14 +13,14 @@
 
 # Cor das luzes ambiente e difusa (Hex)
 000000ff
-19191919
+13131319
 
 # Posição da fonte de luz (X Y Z W)
--0.1 0.5 -1 0
+-12.8 16 -32 0
 
 # Tiles
 x 0 ffffff
-0 1 6a6a6a
+0 1 707070
 r 0 ff0000
 g 0 00ff00
 b 0 0000ff
@@ -30,7 +30,6 @@ p 0 ff00ff
 $
 
 # Eventos
-5 5 0 event1 ff0000
 $
 
 # Mapa

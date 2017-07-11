@@ -15,24 +15,40 @@ namespace Iso
 		if (action == GLFW_PRESS || action == GLFW_REPEAT)
 		{
 			point3f pos = Game::getPlayer()->getPosition();
+
 			switch (key)
 			{
-			case GLFW_KEY_RIGHT:
-				if (Game::getCurrentStage()->isPassable(pos.x + 1, pos.y, pos.z))
-					Game::getPlayer()->move(1, 0, 0);
-				break;
-			case GLFW_KEY_UP:
-				if (Game::getCurrentStage()->isPassable(pos.x, pos.y - 1, pos.z))
-					Game::getPlayer()->move(0, -1, 0);
-				break;
-			case GLFW_KEY_LEFT:
-				if (Game::getCurrentStage()->isPassable(pos.x - 1, pos.y, pos.z))
-					Game::getPlayer()->move(-1, 0, 0);
-				break;
-			case GLFW_KEY_DOWN:
-				if (Game::getCurrentStage()->isPassable(pos.x, pos.y + 1, pos.z))
-					Game::getPlayer()->move(0, 1, 0);
-				break;
+				// Movimento
+				case GLFW_KEY_RIGHT:
+					if (Game::getCurrentStage()->isPassable(pos.x + 1, pos.y, pos.z))
+						Game::getPlayer()->move(1, 0, 0);
+					break;
+				case GLFW_KEY_UP:
+					if (Game::getCurrentStage()->isPassable(pos.x, pos.y - 1, pos.z))
+						Game::getPlayer()->move(0, -1, 0);
+					break;
+				case GLFW_KEY_LEFT:
+					if (Game::getCurrentStage()->isPassable(pos.x - 1, pos.y, pos.z))
+						Game::getPlayer()->move(-1, 0, 0);
+					break;
+				case GLFW_KEY_DOWN:
+					if (Game::getCurrentStage()->isPassable(pos.x, pos.y + 1, pos.z))
+						Game::getPlayer()->move(0, 1, 0);
+					break;
+
+				// Ação
+				case GLFW_KEY_Z:
+				case GLFW_KEY_SPACE:
+					for (int z = -1; z <= 1; z++)
+					for (int y = -1; y <= 1; y++)
+					for (int x = -1; x <= 1; x++)
+					{
+						Event* ev = Game::getCurrentStage()->eventAt(pos.x + x, pos.y + y, pos.z + z);
+						if (ev)
+							ev->start();
+					}
+
+					break;
 			}
 		}
 	}
@@ -57,6 +73,8 @@ namespace Iso
 
 	point2d cursorpos;
 
+	double angle = 0.0;
+
 	/// <summary>
 	/// Evento de movimento do mouse
 	/// </summary>
@@ -69,6 +87,7 @@ namespace Iso
 		{
 			glRotatef(-45, 0, 0, 1);
 			glRotatef(cursorpos.y - y, -1, 0, 0);
+			angle += cursorpos.y - y;
 			glRotatef(45, 0, 0, 1);
 		}
 
@@ -86,9 +105,13 @@ namespace Iso
 	void windowmove_callback(GLFWwindow* w, int x, int y)
 	{
 		glRotatef(-45, 0, 0, 1);
+		glRotatef(-angle, -1, 0, 0);
+
 		glScalef(1 / .05, 1 / .05,  1);
 		glTranslatef((windowpos.x - x) / (float)ISO_WINDOW_WIDTH * 2, (windowpos.y - y) / (float)ISO_WINDOW_HEIGHT * 2, 0);
 		glScalef(.05, .05, 1);
+
+		glRotatef(angle, -1, 0, 0);
 		glRotatef(45, 0, 0, 1);
 
 		Game::getWindow()->redraw();

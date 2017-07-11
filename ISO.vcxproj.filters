@@ -29,9 +29,6 @@
     <ClCompile Include="src\classes\GameWindow.cpp">
       <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
-    <ClCompile Include="src\classes\Input.cpp">
-      <Filter>Arquivos de Origem\classes</Filter>
-    </ClCompile>
     <ClCompile Include="src\classes\Audio.cpp">
       <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>

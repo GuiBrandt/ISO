@@ -10,7 +10,6 @@ int main(void)
     try 
 	{    
 		Game::initialize();
-		Input::initialize();
 		Audio::initialize();
 
 		GameWindow* window = Game::getWindow();

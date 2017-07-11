@@ -127,7 +127,6 @@
     <ClCompile Include="src\classes\Game.cpp" />
     <ClCompile Include="src\classes\GameObject.cpp" />
     <ClCompile Include="src\classes\GameWindow.cpp" />
-    <ClCompile Include="src\classes\Input.cpp" />
     <ClCompile Include="src\classes\Models.cpp" />
     <ClCompile Include="src\classes\Stage.cpp" />
     <ClCompile Include="src\main.cpp" />

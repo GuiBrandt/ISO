@@ -132,9 +132,10 @@ namespace Iso
 
 		// Eventos
 		do getline(f, line);
-		while (!(isdigit(line[0]) || line[0] == '-'));
+		while (!(isdigit(line[0]) || line[0] == '-' || line[0] == '$'));
 
-		do {
+		while (line[0] != '$') 
+		{
 			char name[256];
 
 			int color;
@@ -144,7 +145,7 @@ namespace Iso
 
 			do getline(f, line);
 			while (!(isalnum(line[0]) || line[0] == '$'));
-		} while (line[0] != '$');
+		}
 
 		// Mapa
 		do getline(f, line);
@@ -273,7 +274,8 @@ namespace Iso
 
 		// Eventos
 		for each (auto pair in _events)
-			renderModel(Models::CHARACTER, 24, pair.second->getColor(), point3f{ (float)pair.first.x, (float)pair.first.y, (float)pair.first.z }, GL_QUADS);
+			if (pair.second->isVisible())
+				renderModel(Models::CHARACTER, 24, pair.second->getColor(), point3f{ (float)pair.first.x, (float)pair.first.y, (float)pair.first.z }, GL_QUADS);
 
 		glPopMatrix();
 	}
@@ -307,7 +309,7 @@ namespace Iso
 		}
 
 		for each (auto pair in _events)
-			if (pair.first.x == x && pair.first.y == y && pair.first.z == z)
+			if (pair.first.x == x && pair.first.y == y && pair.first.z == z && pair.second->isVisible())
 				return false;
 
 		return true;

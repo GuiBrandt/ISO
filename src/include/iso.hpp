@@ -108,15 +108,6 @@ namespace Iso
     };
 
 	/// <summary>
-	/// Classe para controle da entrada
-	/// </summary>
-    class Input
-    {
-        public:
-            static void initialize(void);
-    };
-
-	/// <summary>
 	/// Classe para controle da parte sonora do jogo
 	/// </summary>
     class Audio
@@ -195,6 +186,7 @@ namespace Iso
 		private:
 			const char* _script;
 			RGB _color;
+			bool _visible;
 
 		public:
 			Event(const char*, RGB);
@@ -204,6 +196,11 @@ namespace Iso
 
 			RGB getColor(void);
 			void setColor(RGB);
+
+			void show(void);
+			void hide(void);
+
+			bool isVisible();
 	};
 
 	/// <summary>
@@ -265,4 +262,20 @@ namespace Iso
 
 			static void runScript(const char*);
 	};
+
+	//
+	//	Funções dos eventos
+	//
+
+	// Muda o título da janela
+	shiro_native(setTitle);
+
+	// Mostra o evento atual
+	shiro_native(show);
+	
+	// Esconde o evento atual
+	shiro_native(hide);
+
+	// Verifica se o evento atual está visível
+	shiro_native(eventIsVisible);
 };
