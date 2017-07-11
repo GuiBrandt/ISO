@@ -3,6 +3,8 @@
 #include <map>
 #include <vector>
 
+#include <shiro.h>
+
 /// <summary>
 /// Largura da janela do jogo
 /// </summary>
@@ -53,12 +55,32 @@ struct point3f {
 };
 
 /// <summary>
+/// Estrutura para um ponto 4D
+/// </summary>
+struct point4f {
+	GLfloat x;
+	GLfloat y;
+	GLfloat z;
+	GLfloat w;
+};
+
+/// <summary>
 /// Estrutura para uma cor RGB
 /// </summary>
 struct RGB {
 	GLclampf red;
 	GLclampf green;
 	GLclampf blue;
+};
+
+/// <summary>
+/// Estrutura para uma cor RGBA
+/// </summary>
+struct RGBA {
+	GLclampf red;
+	GLclampf green;
+	GLclampf blue;
+	GLclampf alpha;
 };
 
 namespace Iso
@@ -70,7 +92,6 @@ namespace Iso
     {
         private:
             GLFWwindow* _glfwWindow;
-			RGB _backgroundColor = { 0, 0, 0 };
 
         public:
             GameWindow(void);
@@ -78,11 +99,10 @@ namespace Iso
 
             bool shouldClose(void);
             void update(void);
+			void redraw(void);
 
 			point2i getPosition(void);
 			void setPosition(int, int);
-
-			void setBgColor(RGB);
 
 			void setTitle(const char*);
     };
@@ -168,33 +188,17 @@ namespace Iso
 	};
 
 	/// <summary>
-	/// Classe para os comandos dos eventos
-	/// </summary>
-	class EventCommand {
-		private:
-			const char* _code;
-			const char* _params;
-
-		public:
-			EventCommand(const char*);
-
-			const char* getCode(void);
-			void execute(void);
-	};
-
-	/// <summary>
 	/// Classe para os eventos
 	/// </summary>
 	class Event : public GameObject
 	{
 		private:
-			std::vector<EventCommand*> _commands;
+			const char* _script;
 			RGB _color;
-
-			void loadCommands(const char*);
 
 		public:
 			Event(const char*, RGB);
+			~Event(void);
 
 			void start(void);
 
@@ -214,11 +218,10 @@ namespace Iso
 			RGB _bgColor;
 			RGB _playerColor;
 
-			RGB _ambientLightColor;
-			RGB _diffuseLightColor;
-			RGB _specularLightColor;
+			RGBA _ambientLightColor;
+			RGBA _diffuseLightColor;
 
-			point3f _lightOrigin;
+			point4f _lightOrigin;
 
 			std::map<char, Tile> _tiles;
 			std::map<point3i, Event*> _events;
@@ -241,18 +244,25 @@ namespace Iso
 	{
 		private:
 			static Player _player;
-			static Stage _currentStage;
+			static Stage* _currentStage;
 			static Event* _currentEvent;
+			static GameWindow* _window;
+			static shiro_runtime* _scriptRuntime;
 
 		public:
-			static void initialize();
-			
-			static Player* getPlayer();
+			static void initialize(void);
+			static void terminate(void);
 
-			static Stage* getCurrentStage();
+			static GameWindow* getWindow(void);
+
+			static Player* getPlayer(void);
+
+			static Stage* getCurrentStage(void);
 			static void changeStage(const char*);
 
 			static Event* getCurrentEvent();
 			static void setCurrentEvent(Event*);
+
+			static void runScript(const char*);
 	};
 };

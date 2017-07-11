@@ -77,11 +77,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\5 - Utils\glfw-3.2.1\include;$(ProjectDir)src\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\5 - Utils\glfw-3.2.1\include;$(ProjectDir)shiro\include;$(ProjectDir)src\include</AdditionalIncludeDirectories>
       <AdditionalOptions>/NODEFAULTLIB:MSVCRT %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)..\..\5 - Utils\glfw-3.2.1\lib-vc2015\glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)..\..\5 - Utils\glfw-3.2.1\lib-vc2015\glfw3.lib;$(ProjectDir)shiro\libshiro.a;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>NotSet</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -120,12 +120,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\include\iso.hpp" />
-    <ClInclude Include="src\include\Models.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\classes\Audio.cpp" />
     <ClCompile Include="src\classes\Event.cpp" />
-    <ClCompile Include="src\classes\EventCommand.cpp" />
     <ClCompile Include="src\classes\Game.cpp" />
     <ClCompile Include="src\classes\GameObject.cpp" />
     <ClCompile Include="src\classes\GameWindow.cpp" />

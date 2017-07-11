@@ -10,7 +10,7 @@ namespace Iso
 	/// <summary>
 	/// Estágio atual do jogo
 	/// </summary>
-	Stage Game::_currentStage("test");
+	Stage* Game::_currentStage;
 
 	/// <summary>
 	/// Evento em execução
@@ -18,13 +18,52 @@ namespace Iso
 	Event* Game::_currentEvent = nullptr;
 
 	/// <summary>
+	/// Janela do jogo
+	/// </summary>
+	GameWindow* Game::_window;
+
+	/// <summary>
+	/// Runtime do Shiro
+	/// </summary>
+	shiro_runtime* Game::_scriptRuntime;
+
+	/// <summary>
+	/// Muda o título da janela do jogo
+	/// </summary>
+	shiro_native(setTitle)
+	{
+		printf("asd");
+		shiro_push_arg_c(title, string, 0);
+
+		Game::getWindow()->setTitle(title);
+
+		return shiro_nil;
+	}
+
+	/// <summary>
 	/// Inicialização do módulo do jogo
 	/// </summary>
 	void Game::initialize()
 	{
+		// Inicialização do Shiro
+		_scriptRuntime = shiro_init();
+
+		shiro_def_native(_scriptRuntime, setTitle, 1);
+
+		_window = new GameWindow();
+		_currentStage = new Stage("test");
 		_player.move(2, 2, 0);
-		// TODO
+	}	
+
+	/// <summary>
+	/// Inicialização do módulo do jogo
+	/// </summary>
+	void Game::terminate()
+	{
+		delete _window;
+		delete _currentStage;
 	}
+
 
 	/// <summary>
 	/// Obtém o objeto do jogador
@@ -36,12 +75,21 @@ namespace Iso
 	}
 
 	/// <summary>
+	/// Obtém a janela do jogo
+	/// </summary>
+	/// <returns>A janela do jogo</returns>
+	GameWindow* Game::getWindow()
+	{
+		return _window;
+	}
+
+	/// <summary>
 	/// Obtém o estágio atual do jogo
 	/// </summary>
 	/// <returns></returns>
 	Stage* Game::getCurrentStage()
 	{
-		return &_currentStage;
+		return _currentStage;
 	}
 
 	/// <summary>
@@ -50,7 +98,8 @@ namespace Iso
 	/// <param name="name">Nome do estágio</param>
 	void Game::changeStage(const char* name)
 	{
-		_currentStage = Stage(name);
+		delete _currentStage;
+		_currentStage = new Stage(name);
 	}
 
 	/// <summary>
@@ -69,5 +118,18 @@ namespace Iso
 	void Game::setCurrentEvent(Event* ev)
 	{
 		_currentEvent = ev;
+	}
+
+	/// <summary>
+	/// Executa um script
+	/// </summary>
+	/// <param name="code">Código que será executado</param>
+	void Game::runScript(const char* code)
+	{
+		char* c = (char*)malloc(strlen(code) + 1);
+		memcpy_s(c, strlen(code) + 1, code, strlen(code));
+
+		shiro_binary* bin = shiro_compile(c);
+		shiro_execute(_scriptRuntime, bin);
 	}
 };

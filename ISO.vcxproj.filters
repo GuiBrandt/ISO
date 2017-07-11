@@ -21,9 +21,6 @@
     <ClInclude Include="src\include\iso.hpp">
       <Filter>Arquivos de Cabeçalho</Filter>
     </ClInclude>
-    <ClInclude Include="src\include\Models.hpp">
-      <Filter>Arquivos de Cabeçalho</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -39,9 +36,6 @@
       <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
     <ClCompile Include="src\classes\Event.cpp">
-      <Filter>Arquivos de Origem\classes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\classes\EventCommand.cpp">
       <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
     <ClCompile Include="src\classes\Game.cpp">

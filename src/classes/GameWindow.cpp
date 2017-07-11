@@ -75,6 +75,27 @@ namespace Iso
 		cursorpos = { x, y };
 	}
 
+	point2i windowpos = { 0, 0 };
+
+	/// <summary>
+	/// Evento de movimento da janela
+	/// </summary>
+	/// <param name="w">Janela do jogo</param>
+	/// <param name="x">Posição X da janela</param>
+	/// <param name="y">Posição Y da janela</param>
+	void windowmove_callback(GLFWwindow* w, int x, int y)
+	{
+		glRotatef(-45, 0, 0, 1);
+		glScalef(1 / .05, 1 / .05,  1);
+		glTranslatef((windowpos.x - x) / (float)ISO_WINDOW_WIDTH * 2, (windowpos.y - y) / (float)ISO_WINDOW_HEIGHT * 2, 0);
+		glScalef(.05, .05, 1);
+		glRotatef(45, 0, 0, 1);
+
+		Game::getWindow()->redraw();
+
+		windowpos = { x, y };
+	}
+
 	/// <summary>
 	/// Construtor
 	/// </summary>
@@ -100,15 +121,25 @@ namespace Iso
 			throw -2;
 		}
 
+		// Centraliza a janela
+		point2i screenSize;
+		const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		windowpos.x = mode->width / 2 - ISO_WINDOW_WIDTH / 2;
+		windowpos.y = mode->height / 2 - ISO_WINDOW_HEIGHT / 2;
+
+		glfwSetWindowPos(_glfwWindow, windowpos.x, windowpos.y);
+
+		// Inicializa o OpenGL
 		glfwMakeContextCurrent(_glfwWindow);
 
 		// Callbacks
 		glfwSetKeyCallback(_glfwWindow, key_callback);
 		glfwSetMouseButtonCallback(_glfwWindow, mousebutton_callback);
 		glfwSetCursorPosCallback(_glfwWindow, mousemove_callback);
+		glfwSetWindowPosCallback(_glfwWindow, windowmove_callback);
 
 		// Configurações do OpenGL
-		glViewport(0, 0, ISO_WINDOW_HEIGHT, ISO_WINDOW_HEIGHT);
+		glViewport(0, 0, ISO_WINDOW_WIDTH, ISO_WINDOW_HEIGHT);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
@@ -117,20 +148,18 @@ namespace Iso
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
-
-		// Iluminação
-		GLfloat ambientLight[] = { 0, 0, 0, 1 };
-		GLfloat diffuseLight[] = { .1, .1, .1, .1 };
-		//GLfloat position[] = { -.05, .7, -.9, 1 };
-		GLfloat position[] = { -.1, .5, -1, 0 };
-
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
-		glLightfv(GL_LIGHT0, GL_POSITION, position);
 				
 		// Transformações
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		//glOrtho(-1, 1, -1, 1, -1, 1);
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
 		glScalef(.05, -.05, .05);
 		glRotatef(45, 0, 0, 1);
+		//glTranslatef(0, 0, .5);
 		glPushMatrix();
 	}
 
@@ -151,20 +180,25 @@ namespace Iso
 		return glfwWindowShouldClose(_glfwWindow);
 	}
 
-	int c = 0;
-
 	/// <summary>
 	/// Atualiza a janela do jogo
 	/// </summary>
 	void GameWindow::update(void)
 	{
-		glClearColor(_backgroundColor.red, _backgroundColor.green, _backgroundColor.blue, 1);
+		redraw();
+		glfwPollEvents();
+	}
+
+	/// <summary>
+	/// Redesenha a tela
+	/// </summary>
+	void GameWindow::redraw(void)
+	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Game::getCurrentStage()->render();
 
 		glfwSwapBuffers(_glfwWindow);
-		glfwPollEvents();
 	}
 
 	/// <summary>
@@ -187,15 +221,6 @@ namespace Iso
 	void GameWindow::setPosition(int x, int y)
 	{
 		glfwSetWindowPos(_glfwWindow, x, y);
-	}
-
-	/// <summary>
-	/// Define a cor de fundo da janela
-	/// </summary>
-	/// <param name="color">Cor com a qual o fundo da tela será pintado</param>
-	void GameWindow::setBgColor(RGB color)
-	{
-		_backgroundColor = color;
 	}
 
 	/// <summary>

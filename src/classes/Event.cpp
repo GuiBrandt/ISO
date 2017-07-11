@@ -15,23 +15,27 @@ namespace Iso
 	{
 		_color = color;
 
-		loadCommands(name);
+		string script, line;
+
+		string fname = "data/events/";
+		fname += name;
+		ifstream file(fname);
+		
+		while (getline(file, line))
+			script.append(line + "\n");
+
+		char* buffer = (char*)calloc(script.length() + 1, sizeof(char));
+		script._Copy_s(buffer, script.length() + 1, script.length());
+
+		_script = buffer;
 	}
 
 	/// <summary>
-	/// Carrega os comandos do evento do arquivo dele
+	/// Destrutor
 	/// </summary>
-	/// <param name="name">Nome do evento</param>
-	void Event::loadCommands(const char* name)
+	Event::~Event()
 	{
-		string fname = "data/events/";
-		fname += name;
-
-		ifstream in(fname);
-		string line;
-
-		while (getline(in, line))
-			_commands.push_back(new EventCommand(line.c_str()));
+		delete _script;
 	}
 
 	/// <summary>
@@ -57,8 +61,6 @@ namespace Iso
 	void Event::start()
 	{
 		Game::setCurrentEvent(this);
-		
-		for each (EventCommand* command in _commands)
-			command->execute();
+		Game::runScript(_script);
 	}
 };

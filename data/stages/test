@@ -11,13 +11,12 @@
 # Cor do jogador (Hex)
 333333
 
-# Cor das luzes ambiente, difusa e especular (Hex)
-ffffff
-ffffff
-ffffff
+# Cor das luzes ambiente e difusa (Hex)
+000000ff
+19191919
 
-# Posição da fonte de luz (X Y Z)
-0 0 0
+# Posição da fonte de luz (X Y Z W)
+-0.1 0.5 -1 0
 
 # Tiles
 x 0 ffffff

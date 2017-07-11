@@ -8,15 +8,14 @@ using namespace Iso;
 int main(void)
 {
     try 
-	{
-		GameWindow window;
-    
+	{    
 		Game::initialize();
 		Input::initialize();
 		Audio::initialize();
 
-		while (!window.shouldClose())
-			window.update();
+		GameWindow* window = Game::getWindow();
+		while (!window->shouldClose())
+			window->update();
 
 		return 0;
 	} 

@@ -1,5 +1,4 @@
 #include <iso.hpp>
-#include <Models.hpp>
 
 #include <fstream>
 #include <string>
@@ -12,8 +11,8 @@ namespace Iso
 	/// <summary>
 	/// Converte hexadecimal em RGB
 	/// </summary>
-	/// <param name="hex"></param>
-	/// <returns></returns>
+	/// <param name="hex">Hexadecimal</param>
+	/// <returns>RGB</returns>
 	RGB hexToRGB(int hex)
 	{
 		int r = (hex >> 16) & 0xff,
@@ -21,6 +20,21 @@ namespace Iso
 			b = hex & 0xff;
 
 		return { r / 255.0f, g / 255.0f, b / 255.0f };
+	}
+
+	/// <summary>
+	/// Converte hexadecimal em RGBA
+	/// </summary>
+	/// <param name="hex">Hexadecimal</param>
+	/// <returns>RGBA</returns>
+	RGBA hexToRGBA(int hex)
+	{
+		int r = (hex >> 24) & 0xff,
+			g = (hex >> 16) & 0xff,
+			b = (hex >> 8) & 0xff,
+			a = hex & 0xff;
+
+		return { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
 	}
 
 	/// <summary>
@@ -39,6 +53,24 @@ namespace Iso
 		sscanf_s(line.c_str(), "%06x", &hex);
 
 		return hexToRGB(hex);
+	}
+
+	/// <summary>
+	/// Lê uma cor RGBA a partir de hexadecimal no arquivo de estágio
+	/// </summary>
+	/// <param name="in">Stream de leitura do arquivo</param>
+	/// <returns>Um RGB com a cor lida</returns>
+	RGBA readHexColor4(ifstream& in)
+	{
+		string line;
+
+		do getline(in, line);
+		while (!isxdigit(line[0]));
+
+		int hex;
+		sscanf_s(line.c_str(), "%08x", &hex);
+
+		return hexToRGBA(hex);
 	}
 
 	/// <summary>
@@ -72,13 +104,12 @@ namespace Iso
 		_playerColor = readHexColor(f);
 
 		// Cor das luzes
-		_ambientLightColor = readHexColor(f);
-		_diffuseLightColor = readHexColor(f);
-		_specularLightColor = readHexColor(f);
+		_ambientLightColor = readHexColor4(f);
+		_diffuseLightColor = readHexColor4(f);
 
 		// Posição das luzes
 		do getline(f, line);
-		while (!isdigit(line[0]));
+		while (!(isdigit(line[0]) || line[0] == '-'));
 
 		sscanf_s(line.c_str(), "%f %f %f", &fx, &fy, &fz);
 		
@@ -101,7 +132,7 @@ namespace Iso
 
 		// Eventos
 		do getline(f, line);
-		while (!isdigit(line[0]));
+		while (!(isdigit(line[0]) || line[0] == '-'));
 
 		do {
 			char name[256];
@@ -141,6 +172,11 @@ namespace Iso
 
 			getline(f, line);
 		} while (line[0] != '$');
+
+		string ename = name;
+		ename += "-init";
+
+		Event(ename.c_str(), RGB { 0, 0, 0 }).start();
 	}
 
 	/// <summary>
@@ -179,7 +215,28 @@ namespace Iso
 	/// </summary>
 	void Stage::render(void)
 	{
+		glClearColor(_bgColor.red, _bgColor.green, _bgColor.blue, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//
+		// Iluminação
+		//
+		
 		glMatrixMode(GL_MODELVIEW);
+
+		glPushMatrix();
+		glLoadIdentity();
+
+		glLightfv(GL_LIGHT0, GL_AMBIENT, (float*)&_ambientLightColor);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, (float*)&_diffuseLightColor);
+		glLightfv(GL_LIGHT0, GL_POSITION, (float*)&_lightOrigin);
+
+		glPopMatrix();
+
+		//
+		// Objetos
+		//
+
 		glPushMatrix();
 
 		// Jogador
