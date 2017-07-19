@@ -1,7 +1,10 @@
 #include <iso.hpp>
+#include <thread>
 
 namespace Iso
 {
+	GLfloat angleX, angleY, angleZ = 45;
+
 	/// <summary>
 	/// Evento de digitação com o teclado
 	/// </summary>
@@ -24,7 +27,12 @@ namespace Iso
 						Game::getPlayer()->move(1, 0, 0);
 					break;
 				case GLFW_KEY_UP:
-					if (Game::getCurrentStage()->isPassable(pos.x, pos.y - 1, pos.z))
+					if (mods & GLFW_MOD_CONTROL)
+					{
+						if (Game::getCurrentStage()->isPassable(pos.x, pos.y, pos.z - 1))
+							Game::getPlayer()->move(0, 0, -1);
+					}
+					else if (Game::getCurrentStage()->isPassable(pos.x, pos.y - 1, pos.z))
 						Game::getPlayer()->move(0, -1, 0);
 					break;
 				case GLFW_KEY_LEFT:
@@ -32,12 +40,17 @@ namespace Iso
 						Game::getPlayer()->move(-1, 0, 0);
 					break;
 				case GLFW_KEY_DOWN:
-					if (Game::getCurrentStage()->isPassable(pos.x, pos.y + 1, pos.z))
-						Game::getPlayer()->move(0, 1, 0);
+					if (mods & GLFW_MOD_CONTROL)
+					{
+						if (Game::getCurrentStage()->isPassable(pos.x, pos.y, pos.z + 1))
+							Game::getPlayer()->move(0, 0, 1);
+					}
+					else if (Game::getCurrentStage()->isPassable(pos.x, pos.y + 1, pos.z))
+							Game::getPlayer()->move(0, 1, 0);
 					break;
 
 				// Ação
-				case GLFW_KEY_Z:
+				case GLFW_KEY_ENTER:
 				case GLFW_KEY_SPACE:
 					for (int z = -1; z <= 1; z++)
 					for (int y = -1; y <= 1; y++)
@@ -49,6 +62,84 @@ namespace Iso
 					}
 
 					break;
+
+				case GLFW_KEY_X:
+					for (int i = 0; i < 15; i++)
+					{
+						angleX += (mods & GLFW_MOD_CONTROL) ? 1 : -1;
+
+						int signal = angleX / abs(angleX);
+						int val = __min(abs(angleX), 90);
+						
+						angleX = signal * val;
+
+						Game::getWindow()->redraw();
+					}
+					break;
+				case GLFW_KEY_Y:
+					for (int i = 0; i < 15; i++)
+					{
+						angleY += (mods & GLFW_MOD_CONTROL) ? -1 : 1;
+
+						int signal = angleY / abs(angleY);
+						int val = __min(abs(angleY), 90);
+
+						angleY = signal * val;
+
+						Game::getWindow()->redraw();
+					}
+					break;
+				case GLFW_KEY_Z:
+					for (int i = 0; i < 15; i++)
+					{
+						angleZ += (mods & GLFW_MOD_CONTROL) ? -1 : 1;
+						
+						int signal = angleZ / abs(angleZ);
+						int val = __min(abs(angleZ), 90);
+
+						angleZ = signal * val;
+
+						Game::getWindow()->redraw();
+					}
+					break;
+			}
+		}
+	}
+
+	const char* old_title;
+
+	char writing[256];
+	size_t writing_i = 0;
+
+	/// <summary>
+	/// Evento de digitação
+	/// </summary>
+	/// <param name="w">Janela do jogo</param>
+	/// <param name="chr">Caractere digitado</param>
+	void char_callback(GLFWwindow* w, unsigned int chr)
+	{
+		chr = toupper(chr);
+
+		if (chr == 'X' || chr == 'Y' || chr == 'Z')
+			return;
+
+		writing[writing_i++] = chr;
+		writing[writing_i] = 0;
+
+		glfwSetWindowTitle(w, writing);
+
+		if (writing_i == strlen(Game::getCurrentStage()->getPassword()))
+		{
+			if (strcmp(writing, Game::getCurrentStage()->getPassword()) == 0)
+				Game::changeStage(Game::getCurrentStage()->getNext());
+			else
+			{
+				glfwSetWindowTitle(w, "NOT THAT");
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+				glfwSetWindowTitle(w, old_title);
+				
+				writing_i = 0;
+				writing[writing_i] = 0;
 			}
 		}
 	}
@@ -83,14 +174,6 @@ namespace Iso
 	/// <param name="y">Posição Y do mouse</param>
 	void mousemove_callback(GLFWwindow* w, double x, double y)
 	{
-		if (dragging)
-		{
-			glRotatef(-45, 0, 0, 1);
-			glRotatef(cursorpos.y - y, -1, 0, 0);
-			angle += cursorpos.y - y;
-			glRotatef(45, 0, 0, 1);
-		}
-
 		cursorpos = { x, y };
 	}
 
@@ -104,15 +187,9 @@ namespace Iso
 	/// <param name="y">Posição Y da janela</param>
 	void windowmove_callback(GLFWwindow* w, int x, int y)
 	{
-		glRotatef(-45, 0, 0, 1);
-		glRotatef(-angle, -1, 0, 0);
-
 		glScalef(1 / .05, 1 / .05,  1);
 		glTranslatef((windowpos.x - x) / (float)ISO_WINDOW_WIDTH * 2, (windowpos.y - y) / (float)ISO_WINDOW_HEIGHT * 2, 0);
 		glScalef(.05, .05, 1);
-
-		glRotatef(angle, -1, 0, 0);
-		glRotatef(45, 0, 0, 1);
 
 		Game::getWindow()->redraw();
 
@@ -157,6 +234,7 @@ namespace Iso
 
 		// Callbacks
 		glfwSetKeyCallback(_glfwWindow, key_callback);
+		glfwSetCharCallback(_glfwWindow, char_callback);
 		glfwSetMouseButtonCallback(_glfwWindow, mousebutton_callback);
 		glfwSetCursorPosCallback(_glfwWindow, mousemove_callback);
 		glfwSetWindowPosCallback(_glfwWindow, windowmove_callback);
@@ -175,14 +253,11 @@ namespace Iso
 		// Transformações
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		//glOrtho(-1, 1, -1, 1, -1, 1);
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
 		glScalef(.05, -.05, .05);
-		glRotatef(45, 0, 0, 1);
-		//glTranslatef(0, 0, .5);
 		glPushMatrix();
 	}
 
@@ -219,7 +294,16 @@ namespace Iso
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		
+		glRotatef(angleX, 1, 0, 0);
+		glRotatef(angleY, 0, 1, 0);
+		glRotatef(angleZ, 0, 0, 1);
+
 		Game::getCurrentStage()->render();
+
+		glPopMatrix();
 
 		glfwSwapBuffers(_glfwWindow);
 	}
@@ -250,8 +334,9 @@ namespace Iso
 	/// Define o título da janela
 	/// </summary>
 	/// <param name="title">Título a ser atribuído à janela</param>
-	void GameWindow::setTitle(const char *title)
+	void GameWindow::setTitle(const char* title)
 	{
 		glfwSetWindowTitle(_glfwWindow, title);
+		old_title = title;
 	}
 };

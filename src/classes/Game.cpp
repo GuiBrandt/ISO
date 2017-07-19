@@ -1,4 +1,5 @@
 #include <iso.hpp>
+#include <string>
 
 namespace Iso
 {
@@ -36,15 +37,19 @@ namespace Iso
 		_scriptRuntime = shiro_init();
 
 		shiro_def_native(_scriptRuntime, setTitle, 1);
+		shiro_def_native(_scriptRuntime, setPass, 2);
+		shiro_def_native(_scriptRuntime, changeStage, 1);
 		shiro_def_native(_scriptRuntime, show, 0);
 		shiro_def_native(_scriptRuntime, hide, 0);
 		shiro_def_native(_scriptRuntime, eventIsVisible, 0);
 
 		// Objetos do jogo
 		_window = new GameWindow();
-		_currentStage = new Stage("test");
+
+		changeStage("test");
+
 		_player.move(2, 2, 0);
-	}	
+	}
 
 	/// <summary>
 	/// Inicialização do módulo do jogo
@@ -89,8 +94,14 @@ namespace Iso
 	/// <param name="name">Nome do estágio</param>
 	void Game::changeStage(const char* name)
 	{
-		delete _currentStage;
+		if (_currentEvent)
+			delete _currentStage;
 		_currentStage = new Stage(name);
+
+		std::string ename = name;
+		ename += "-init";
+
+		Event(ename.c_str(), RGB{ 0, 0, 0 }).start();
 	}
 
 	/// <summary>

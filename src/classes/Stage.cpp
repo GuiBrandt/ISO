@@ -173,11 +173,6 @@ namespace Iso
 
 			getline(f, line);
 		} while (line[0] != '$');
-
-		string ename = name;
-		ename += "-init";
-
-		Event(ename.c_str(), RGB { 0, 0, 0 }).start();
 	}
 
 	/// <summary>
@@ -262,7 +257,7 @@ namespace Iso
 				switch (t.type)
 				{
 					case TileType::Floor:
-						renderModel(Models::FLOOR, 4, t.color, point3f { (float)x, (float)y, (float)z }, GL_QUADS);
+						renderModel(Models::FLOOR, 8, t.color, point3f { (float)x, (float)y, (float)z }, GL_QUADS);
 						break;
 
 					case TileType::Wall:
@@ -291,12 +286,7 @@ namespace Iso
 	{
 		for each (MapLayer layer in _layers)
 		{
-			if (z < layer.originZ)
-				if (floor(layer.originZ) != z)
-					continue;
-			else
-				if (ceil(layer.originZ) != z)
-					continue;
+			int oz = -round(layer.originZ);
 
 			char tile = layer.map[y * _xSize + x];
 
@@ -304,7 +294,10 @@ namespace Iso
 				continue;
 			Tile t = _tiles[tile];
 
-			if (t.type == Wall)
+			if (z == oz && t.type == Wall)
+				return false;
+
+			if (z == oz + 1 && t.type == Floor)
 				return false;
 		}
 
@@ -331,5 +324,34 @@ namespace Iso
 				ev = pair.second;
 
 		return ev;
+	}
+
+	/// <summary>
+	/// Determina a senha para passar de fase
+	/// </summary>
+	/// <param name="pass">Senha</param>
+	/// <param name="next">Nome da próxima fase</param>
+	void Stage::setPassword(const char* pass, const char* next = NULL)
+	{
+		_password = pass;
+
+		if (next != NULL)
+			_next = next;
+	}
+
+	/// <summary>
+	/// Obtém a senha para passar de fase
+	/// </summary>
+	const char* Stage::getPassword()
+	{
+		return _password;
+	}
+
+	/// <summary>
+	/// Obtém o nome da próxima fase
+	/// </summary>
+	const char* Stage::getNext()
+	{
+		return _next;
 	}
 };

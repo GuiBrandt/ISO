@@ -104,6 +104,31 @@ namespace Iso
 	}
 
 	/// <summary>
+	/// Define a senha para passar de fase
+	/// </summary>
+	shiro_native(setPass)
+	{
+		shiro_push_arg_c(pass, string, 0);
+		shiro_push_arg_c(next, string, 0);
+
+		Game::getCurrentStage()->setPassword(pass, next);
+
+		return shiro_nil;
+	}
+
+	/// <summary>
+	/// Muda a fase atual
+	/// </summary>
+	shiro_native(changeStage)
+	{
+		shiro_push_arg_c(name, string, 0);
+
+		Game::changeStage(name);
+
+		return shiro_nil;
+	}
+
+	/// <summary>
 	/// Mostra o evento atual
 	/// </summary>
 	shiro_native(show)

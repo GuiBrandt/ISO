@@ -1,7 +1,8 @@
 #pragma once
-#include <GLFW/glfw3.h>
 #include <map>
 #include <vector>
+
+#include <GLFW/glfw3.h>
 
 #include <shiro.h>
 
@@ -225,6 +226,9 @@ namespace Iso
 
 			std::vector<MapLayer> _layers;
 
+			const char* _password;
+			const char* _next;
+
 		public:
 			Stage(const char*);
 			~Stage(void);
@@ -232,6 +236,10 @@ namespace Iso
 			void render(void);
 			bool isPassable(int, int, int);
 			Event* eventAt(int, int, int);
+			
+			void setPassword(const char*, const char*);
+			const char* getPassword(void);
+			const char* getNext(void);
 	};
 
 	/// <summary>
@@ -269,6 +277,12 @@ namespace Iso
 
 	// Muda o título da janela
 	shiro_native(setTitle);
+
+	// Define a senha da fase
+	shiro_native(setPass);
+
+	// Muda de fase
+	shiro_native(changeStage);
 
 	// Mostra o evento atual
 	shiro_native(show);
