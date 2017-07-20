@@ -94,8 +94,9 @@ namespace Iso
 	/// <param name="name">Nome do estágio</param>
 	void Game::changeStage(const char* name)
 	{
-		if (_currentEvent)
+		if (_currentStage)
 			delete _currentStage;
+
 		_currentStage = new Stage(name);
 
 		std::string ename = name;

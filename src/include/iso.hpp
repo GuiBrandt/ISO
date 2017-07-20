@@ -235,6 +235,7 @@ namespace Iso
 
 			void render(void);
 			bool isPassable(int, int, int);
+			bool isEmpty(int, int, int);
 			Event* eventAt(int, int, int);
 			
 			void setPassword(const char*, const char*);

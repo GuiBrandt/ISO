@@ -141,7 +141,7 @@ namespace Iso
 			int color;
 			sscanf_s(line.c_str(), "%d %d %d %255[^ ] %x", &x, &y, &z, name, 256, &color);
 
-			_events.insert_or_assign(point3i { x, y, z }, new Event(name, hexToRGB(color)));
+			_events.insert_or_assign(point3i { x, y, -z }, new Event(name, hexToRGB(color)));
 
 			do getline(f, line);
 			while (!(isalnum(line[0]) || line[0] == '$'));
@@ -292,18 +292,38 @@ namespace Iso
 
 			if (!_tiles.count(tile))
 				continue;
+
 			Tile t = _tiles[tile];
 
 			if (z == oz && t.type == Wall)
-				return false;
-
-			if (z == oz + 1 && t.type == Floor)
 				return false;
 		}
 
 		for each (auto pair in _events)
 			if (pair.first.x == x && pair.first.y == y && pair.first.z == z && pair.second->isVisible())
 				return false;
+
+		return true;
+	}
+
+	/// <summary>
+	/// Verifica se uma posição está sem tiles
+	/// </summary>
+	/// <param name="x">X da posição</param>
+	/// <param name="y">Y da posição</param>
+	/// <param name="z">Z da posição</param>
+	/// <returns>Verdadeiro se estiver e falso se não</returns>
+	bool Stage::isEmpty(int x, int y, int z)
+	{
+		for each (MapLayer layer in _layers)
+		{
+			int oz = -round(layer.originZ);
+
+			char tile = layer.map[y * _xSize + x];
+
+			if (oz == z && _tiles.count(tile))
+				return false;
+		}
 
 		return true;
 	}

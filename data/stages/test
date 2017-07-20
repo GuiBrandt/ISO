@@ -3,7 +3,7 @@
 #
 
 # Tamanho do mapa (X Y)
-10 10
+11 11
 
 # Cor de fundo (Hex)
 000000
@@ -34,44 +34,48 @@ $
 
 # Mapa
 0 0 0
-xxxxxxxxxx
-x00000000x
-x00000000x
-x000r0000x
-x00000000x
-x00000000x
-x00000000x
-x00000000x
-x00000000x
-xxxxxxxxxx
+xxxxxxxxxxx
+x000000000x
+x000000000x
+x000000000x
+x000000000x
+x0000r0000x
+x000000000x
+x000000000x
+x000000000x
+x000000000x
+xxxxxxxxxxx
 0 0 1
-xxxxxxxxxx
-x        x
-x        x
-x   g    x
-x        x
-x        x
-x        x
-x        x
-x        x
-xxxxxxxxxx
+xxxxxxxxxxx
+x         x
+x         x
+x         x
+x         x
+x    g    x
+x         x
+x         x
+x         x
+x         x
+xxxxxxxxxxx
 0 0 2
-xxxxxxxxxx
-x        x
-x        x
-x   b    x
-x        x
-x        x
-x        x
-x        x
-x        x
-xxxxxxxxxx
+xxxxxxxxxxx
+x         x
+x         x
+x         x
+x         x
+x    b    x
+x         x
+x         x
+x         x
+x         x
+xxxxxxxxxxx
 0 0 3
 
 
 
-    y
 
+
+     y
 
 
 
@@ -81,8 +85,9 @@ xxxxxxxxxx
 
 
 
-    c
 
+
+     c
 
 
 
@@ -92,8 +97,9 @@ xxxxxxxxxx
 
 
 
-    p
 
+
+     p
 
 
 

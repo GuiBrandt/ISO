@@ -3,6 +3,10 @@
 
 namespace Iso
 {
+	const char* old_title;
+	char writing[256];
+	size_t writing_i = 0;
+
 	GLfloat angleX, angleY, angleZ = 45;
 
 	/// <summary>
@@ -19,34 +23,34 @@ namespace Iso
 		{
 			point3f pos = Game::getPlayer()->getPosition();
 
+			int dir = -1;
+
 			switch (key)
 			{
+				case GLFW_KEY_BACKSPACE:
+					if (writing_i > 0)
+					{
+						writing[--writing_i] = 0;
+						if (writing_i > 0)
+							glfwSetWindowTitle(w, writing);
+						else
+							glfwSetWindowTitle(w, old_title);
+					}
+					break;
+
 				// Movimento
 				case GLFW_KEY_RIGHT:
-					if (Game::getCurrentStage()->isPassable(pos.x + 1, pos.y, pos.z))
-						Game::getPlayer()->move(1, 0, 0);
+					dir = 0;
 					break;
 				case GLFW_KEY_UP:
-					if (mods & GLFW_MOD_CONTROL)
-					{
-						if (Game::getCurrentStage()->isPassable(pos.x, pos.y, pos.z - 1))
-							Game::getPlayer()->move(0, 0, -1);
-					}
-					else if (Game::getCurrentStage()->isPassable(pos.x, pos.y - 1, pos.z))
-						Game::getPlayer()->move(0, -1, 0);
+					dir = 1;
 					break;
 				case GLFW_KEY_LEFT:
-					if (Game::getCurrentStage()->isPassable(pos.x - 1, pos.y, pos.z))
-						Game::getPlayer()->move(-1, 0, 0);
+					dir = 2;
+					
 					break;
 				case GLFW_KEY_DOWN:
-					if (mods & GLFW_MOD_CONTROL)
-					{
-						if (Game::getCurrentStage()->isPassable(pos.x, pos.y, pos.z + 1))
-							Game::getPlayer()->move(0, 0, 1);
-					}
-					else if (Game::getCurrentStage()->isPassable(pos.x, pos.y + 1, pos.z))
-							Game::getPlayer()->move(0, 1, 0);
+					dir = 3;
 					break;
 
 				// Ação
@@ -67,49 +71,91 @@ namespace Iso
 					for (int i = 0; i < 15; i++)
 					{
 						angleX += (mods & GLFW_MOD_CONTROL) ? 1 : -1;
-
-						int signal = angleX / abs(angleX);
-						int val = __min(abs(angleX), 90);
-						
-						angleX = signal * val;
+						angleX = __min(__max(angleX, -90), 0);
 
 						Game::getWindow()->redraw();
 					}
 					break;
-				case GLFW_KEY_Y:
-					for (int i = 0; i < 15; i++)
-					{
-						angleY += (mods & GLFW_MOD_CONTROL) ? -1 : 1;
 
-						int signal = angleY / abs(angleY);
-						int val = __min(abs(angleY), 90);
-
-						angleY = signal * val;
-
-						Game::getWindow()->redraw();
-					}
-					break;
 				case GLFW_KEY_Z:
 					for (int i = 0; i < 15; i++)
 					{
 						angleZ += (mods & GLFW_MOD_CONTROL) ? -1 : 1;
-						
-						int signal = angleZ / abs(angleZ);
-						int val = __min(abs(angleZ), 90);
-
-						angleZ = signal * val;
 
 						Game::getWindow()->redraw();
 					}
 					break;
 			}
+
+			if (dir >= 0)
+			{
+				int x = 0, y = 0;
+
+				if (angleZ < 0)
+					angleZ = 360 + (int)angleZ % 360;
+
+				angleZ = (int)angleZ % 360;
+				
+				dir += floor((45 + angleZ) / 90);
+				dir %= 4;
+
+				switch (dir)
+				{
+					case 0:
+						x = 1;
+						break;
+					case 1:
+						y = -1;
+						break;
+					case 2:
+						x = -1;
+						break;
+					case 3:
+						y = 1;
+						break;
+				}
+
+				int z = 0;
+
+				if (!Game::getCurrentStage()->isEmpty(pos.x + x, pos.y + y, pos.z))
+				{
+					if (Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z))
+						z = 0;
+					else if (Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z + 1) && Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z))
+						z = 1;
+					else if (Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z - 1) && Game::getCurrentStage()->isPassable(pos.x, pos.y, pos.z - 1))
+						z = -1;
+					else
+						return;
+				}
+				else while (Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z + z + 1) && Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z + z) && z < 256)
+					z++;
+
+				float speed = 0.25f;
+				int i;
+
+				if (z < 0)
+					for (i = 0; i < 1 / speed; i++)
+					{
+						Game::getPlayer()->move(0, 0, z * speed);
+						Game::getWindow()->redraw();
+					}
+
+				for (i = 0; i < 1 / speed; i++)
+				{
+					Game::getPlayer()->move(x * speed, y * speed, 0);
+					Game::getWindow()->redraw();
+				}
+
+				if (z > 0)
+					for (i = 0; i < z / speed; i++)
+					{
+						Game::getPlayer()->move(0, 0, speed);
+						Game::getWindow()->redraw();
+					}
+			}
 		}
 	}
-
-	const char* old_title;
-
-	char writing[256];
-	size_t writing_i = 0;
 
 	/// <summary>
 	/// Evento de digitação
@@ -120,7 +166,7 @@ namespace Iso
 	{
 		chr = toupper(chr);
 
-		if (chr == 'X' || chr == 'Y' || chr == 'Z')
+		if (chr == 'X' || chr == 'Z')
 			return;
 
 		writing[writing_i++] = chr;

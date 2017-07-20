@@ -109,7 +109,7 @@ namespace Iso
 	shiro_native(setPass)
 	{
 		shiro_push_arg_c(pass, string, 0);
-		shiro_push_arg_c(next, string, 0);
+		shiro_push_arg_c(next, string, 1);
 
 		Game::getCurrentStage()->setPassword(pass, next);
 
