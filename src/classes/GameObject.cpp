@@ -23,4 +23,17 @@ namespace Iso
 		_y += y;
 		_z += z;
 	}
+
+	/// <summary>
+	/// Move o objeto para uma posição absoluta
+	/// </summary>
+	/// <param name="x">Posição X</param>
+	/// <param name="y">Posição Y</param>
+	/// <param name="z">Posição Z</param>
+	void GameObject::moveTo(GLfloat x, GLfloat y, GLfloat z)
+	{
+		_x = x;
+		_y = y;
+		_z = z;
+	}
 };

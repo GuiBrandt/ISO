@@ -39,16 +39,30 @@ namespace Iso
 		shiro_def_native(_scriptRuntime, setTitle, 1);
 		shiro_def_native(_scriptRuntime, setPass, 2);
 		shiro_def_native(_scriptRuntime, changeStage, 1);
+		shiro_def_native(_scriptRuntime, say, 4);
 		shiro_def_native(_scriptRuntime, show, 0);
 		shiro_def_native(_scriptRuntime, hide, 0);
 		shiro_def_native(_scriptRuntime, eventIsVisible, 0);
+		shiro_def_native(_scriptRuntime, setAmbientLight, 4);
+		shiro_def_native(_scriptRuntime, setDiffuseLight, 4);
+		shiro_def_native(_scriptRuntime, setLightPosition, 4);
+		shiro_def_native(_scriptRuntime, getAmbientLight, 0);
+		shiro_def_native(_scriptRuntime, getDiffuseLight, 0);
+		shiro_def_native(_scriptRuntime, getLightX, 0);
+		shiro_def_native(_scriptRuntime, getLightY, 0);
+		shiro_def_native(_scriptRuntime, getLightZ, 0);
+		shiro_def_native(_scriptRuntime, getLightW, 0);
+		shiro_def_native(_scriptRuntime, move, 3);
+		shiro_def_native(_scriptRuntime, die, 0);
+		shiro_def_native(_scriptRuntime, threadDo, 1);
+		shiro_def_native(_scriptRuntime, setTimeout, 2);
 
 		// Objetos do jogo
 		_window = new GameWindow();
 
 		changeStage("test");
 
-		_player.move(2, 2, 0);
+		_player.moveTo(2, 2, 0);
 	}
 
 	/// <summary>

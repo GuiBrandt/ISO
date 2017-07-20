@@ -1,2 +1,2 @@
-setTitle("TYPE IN THE COLORS");
-setPass("RGBYCP", "nextstage");
+setTitle("TALK");
+setPass(0, 0);

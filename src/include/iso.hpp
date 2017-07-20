@@ -160,6 +160,7 @@ namespace Iso
 		public:
 			point3f getPosition(void);
 			void move(GLfloat, GLfloat, GLfloat);
+			void moveTo(GLfloat, GLfloat, GLfloat);
 	};
 
 	/// <summary>
@@ -241,6 +242,14 @@ namespace Iso
 			void setPassword(const char*, const char*);
 			const char* getPassword(void);
 			const char* getNext(void);
+
+			RGBA getAmbientLight(void);
+			void setAmbientLight(RGBA);
+			RGBA getDiffuseLight(void);
+			void setDiffuseLight(RGBA);
+
+			point4f getLightPosition(void);
+			void setLightPosition(point4f);
 	};
 
 	/// <summary>
@@ -285,6 +294,9 @@ namespace Iso
 	// Muda de fase
 	shiro_native(changeStage);
 
+	// Mostra uma mensagem
+	shiro_native(say);
+
 	// Mostra o evento atual
 	shiro_native(show);
 	
@@ -293,4 +305,37 @@ namespace Iso
 
 	// Verifica se o evento atual está visível
 	shiro_native(eventIsVisible);
+
+	// Muda a cor da luz ambiente
+	shiro_native(setAmbientLight);
+
+	// Muda a cor da luz difusa
+	shiro_native(setDiffuseLight);
+
+	// Muda a posição da luz
+	shiro_native(setLightPosition);
+
+	// Obtém a cor da luz ambiente
+	shiro_native(getAmbientLight);
+
+	// Obtém a cor da luz difusa
+	shiro_native(getDiffuseLight);
+
+	// Obtém a posição da luz
+	shiro_native(getLightX);
+	shiro_native(getLightY);
+	shiro_native(getLightZ);
+	shiro_native(getLightW);
+
+	// Move o evento
+	shiro_native(move);
+
+	// RIP
+	shiro_native(die);
+
+	// Executa uma tarefa em uma thread
+	shiro_native(threadDo);
+
+	// Define um timeout
+	shiro_native(setTimeout);
 };

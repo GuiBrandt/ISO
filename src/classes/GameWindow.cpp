@@ -68,21 +68,27 @@ namespace Iso
 					break;
 
 				case GLFW_KEY_X:
+					if (angleX / 15.0 - floor(angleX / 15.0) != 0.0)
+						return;
+
 					for (int i = 0; i < 15; i++)
 					{
 						angleX += (mods & GLFW_MOD_CONTROL) ? 1 : -1;
 						angleX = __min(__max(angleX, -90), 0);
 
-						Game::getWindow()->redraw();
+						Game::getWindow()->update();
 					}
 					break;
 
 				case GLFW_KEY_Z:
+					if (angleZ / 15.0 - floor(angleZ / 15.0) != 0.0)
+						return;
+
 					for (int i = 0; i < 15; i++)
 					{
 						angleZ += (mods & GLFW_MOD_CONTROL) ? -1 : 1;
 
-						Game::getWindow()->redraw();
+						Game::getWindow()->update();
 					}
 					break;
 			}
@@ -128,7 +134,7 @@ namespace Iso
 					else
 						return;
 				}
-				else while (Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z + z + 1) && Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z + z) && z < 256)
+				else while (Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z + z + 1) && Game::getCurrentStage()->isEmpty(pos.x + x, pos.y + y, pos.z + z) && z < 256)
 					z++;
 
 				float speed = 0.25f;
@@ -164,9 +170,12 @@ namespace Iso
 	/// <param name="chr">Caractere digitado</param>
 	void char_callback(GLFWwindow* w, unsigned int chr)
 	{
+		if (Game::getCurrentStage()->getPassword() == NULL)
+			return;
+
 		chr = toupper(chr);
 
-		if (chr == 'X' || chr == 'Z')
+		if (chr == 'X' || chr == 'Z' || chr == ' ')
 			return;
 
 		writing[writing_i++] = chr;
@@ -177,7 +186,13 @@ namespace Iso
 		if (writing_i == strlen(Game::getCurrentStage()->getPassword()))
 		{
 			if (strcmp(writing, Game::getCurrentStage()->getPassword()) == 0)
+			{
 				Game::changeStage(Game::getCurrentStage()->getNext());
+				Game::getPlayer()->moveTo(2, 2, 0);
+
+				writing_i = 0;
+				writing[writing_i] = 0;
+			}
 			else
 			{
 				glfwSetWindowTitle(w, "NOT THAT");
@@ -237,7 +252,7 @@ namespace Iso
 		glTranslatef((windowpos.x - x) / (float)ISO_WINDOW_WIDTH * 2, (windowpos.y - y) / (float)ISO_WINDOW_HEIGHT * 2, 0);
 		glScalef(.05, .05, 1);
 
-		Game::getWindow()->redraw();
+		Game::getWindow()->update();
 
 		windowpos = { x, y };
 	}
@@ -318,7 +333,7 @@ namespace Iso
 	/// <summary>
 	/// Verifica se a janela deveria fechar ou não
 	/// </summary>
-	/// <returns>True de o usuário tiver fechado a janela, false de não</returns>
+	/// <returns>True se o usuário tiver fechado a janela, false de não</returns>
 	bool GameWindow::shouldClose(void)
 	{
 		return glfwWindowShouldClose(_glfwWindow);

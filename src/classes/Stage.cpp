@@ -351,17 +351,16 @@ namespace Iso
 	/// </summary>
 	/// <param name="pass">Senha</param>
 	/// <param name="next">Nome da próxima fase</param>
-	void Stage::setPassword(const char* pass, const char* next = NULL)
+	void Stage::setPassword(const char* pass, const char* next)
 	{
 		_password = pass;
-
-		if (next != NULL)
-			_next = next;
+		_next = next;
 	}
 
 	/// <summary>
 	/// Obtém a senha para passar de fase
 	/// </summary>
+	/// <returns>A senha para passar de fase</returns>
 	const char* Stage::getPassword()
 	{
 		return _password;
@@ -370,8 +369,63 @@ namespace Iso
 	/// <summary>
 	/// Obtém o nome da próxima fase
 	/// </summary>
+	/// <returns>O nome da próxima fase</returns>
 	const char* Stage::getNext()
 	{
 		return _next;
+	}
+
+	/// <summary>
+	/// Obtém a cor da luz ambiente
+	/// </summary>
+	/// <returns>A cor da luz ambiente em RGBA</returns>
+	RGBA Stage::getAmbientLight()
+	{
+		return _ambientLightColor;
+	}
+
+	/// <summary>
+	/// Obtém a cor da luz difusa
+	/// </summary>
+	/// <returns>A cor da luz difusa em RGBA</returns>
+	RGBA Stage::getDiffuseLight()
+	{
+		return _diffuseLightColor;
+	}
+
+	/// <summary>
+	/// Muda a cor da luz ambiente
+	/// </summary>
+	/// <param name="rgba">Cor RGBA</param>
+	void Stage::setAmbientLight(RGBA rgba)
+	{
+		_ambientLightColor = rgba;
+	}
+
+	/// <summary>
+	/// Muda a cor da luz difusa
+	/// </summary>
+	/// <param name="rgba">Cor RGBA</param>
+	void Stage::setDiffuseLight(RGBA rgba)
+	{
+		_diffuseLightColor = rgba;
+	}
+
+	/// <summary>
+	/// Obtém a posição da luz
+	/// </summary>
+	/// <returns>A posição 4D da luz</returns>
+	point4f Stage::getLightPosition()
+	{
+		return _lightOrigin;
+	}
+
+	/// <summary>
+	/// Muda a posição da luz
+	/// </summary>
+	/// <param name="pos">Posição 4D</param>
+	void Stage::setLightPosition(point4f pos)
+	{
+		_lightOrigin = pos;
 	}
 };
