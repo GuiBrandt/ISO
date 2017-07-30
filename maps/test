@@ -1,38 +1,4 @@
-#
-# Mapa 1
-#
-
-# Tamanho do mapa (X Y)
 11 11
-
-# Cor de fundo (Hex)
-000000
-
-# Cor do jogador (Hex)
-333333
-
-# Cor das luzes ambiente e difusa (Hex)
-707070ff
-07070719
-
-# Posição da fonte de luz (X Y Z W)
--12.8 16 -32 0
-
-# Tiles
-x 0 ffffff
-0 1 707070
-r 0 ff0000
-g 0 00ff00
-b 0 0000ff
-y 0 ffff00
-c 0 00ffff
-p 0 ff00ff
-$
-
-# Eventos
-$
-
-# Mapa
 0 0 0
 xxxxxxxxxxx
 x000000000x
@@ -45,7 +11,7 @@ x000000000x
 x000000000x
 x000000000x
 xxxxxxxxxxx
-0 0 1
+0 0 -1
 xxxxxxxxxxx
 x         x
 x         x
@@ -57,7 +23,7 @@ x         x
 x         x
 x         x
 xxxxxxxxxxx
-0 0 2
+0 0 -2
 xxxxxxxxxxx
 x         x
 x         x
@@ -69,7 +35,7 @@ x         x
 x         x
 x         x
 xxxxxxxxxxx
-0 0 3
+0 0 -3
 
 
 
@@ -81,7 +47,7 @@ xxxxxxxxxxx
 
 
 
-0 0 4
+0 0 -4
 
 
 
@@ -93,7 +59,7 @@ xxxxxxxxxxx
 
 
 
-0 0 5
+0 0 -5
 
 
 
@@ -105,4 +71,3 @@ xxxxxxxxxxx
 
 
 
-$

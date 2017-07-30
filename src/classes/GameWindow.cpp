@@ -1,13 +1,31 @@
 #include <iso.hpp>
 #include <thread>
 
+#include <ctype.h>
+
 namespace Iso
 {
+	/// <summary>
+	/// Buffer para o título da janela
+	/// </summary>
 	const char* old_title;
+
+	/// <summary>
+	/// Buffer para a sequência sendo escrita como senha para a próxima fase pelo jogador
+	/// </summary>
 	char writing[256];
+
+	/// <summary>
+	/// Índice do último caractere escrito na sequência
+	/// </summary>
 	size_t writing_i = 0;
 
-	GLfloat angleX, angleY, angleZ = 45;
+	/// <summary>
+	/// Ângulos de rotação da cena
+	/// </summary>
+	GLfloat angleX = 0, 
+			angleY = 0, 
+			angleZ = 0;
 
 	/// <summary>
 	/// Evento de digitação com o teclado
@@ -60,9 +78,9 @@ namespace Iso
 					for (int y = -1; y <= 1; y++)
 					for (int x = -1; x <= 1; x++)
 					{
-						Event* ev = Game::getCurrentStage()->eventAt(pos.x + x, pos.y + y, pos.z + z);
+						Event* ev = Game::getWorld()->eventAt((int)pos.x + x, (int)pos.y + y, (int)pos.z + z);
 						if (ev)
-							ev->start();
+							ev->run();
 					}
 
 					break;
@@ -76,7 +94,7 @@ namespace Iso
 						angleX += (mods & GLFW_MOD_CONTROL) ? 1 : -1;
 						angleX = __min(__max(angleX, -90), 0);
 
-						Game::getWindow()->update();
+						Game::getWindow()->update(false);
 					}
 					break;
 
@@ -88,7 +106,7 @@ namespace Iso
 					{
 						angleZ += (mods & GLFW_MOD_CONTROL) ? -1 : 1;
 
-						Game::getWindow()->update();
+						Game::getWindow()->update(false);
 					}
 					break;
 			}
@@ -98,11 +116,11 @@ namespace Iso
 				int x = 0, y = 0;
 
 				if (angleZ < 0)
-					angleZ = 360 + (int)angleZ % 360;
+					angleZ = (GLfloat)(360 + (int)angleZ % 360);
 
-				angleZ = (int)angleZ % 360;
+				angleZ = (GLfloat)((int)angleZ % 360);
 				
-				dir += floor((45 + angleZ) / 90);
+				dir += (int)floor((45 + angleZ) / 90);
 				dir %= 4;
 
 				switch (dir)
@@ -121,44 +139,7 @@ namespace Iso
 						break;
 				}
 
-				int z = 0;
-
-				if (!Game::getCurrentStage()->isEmpty(pos.x + x, pos.y + y, pos.z))
-				{
-					if (Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z))
-						z = 0;
-					else if (Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z + 1) && Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z))
-						z = 1;
-					else if (Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z - 1) && Game::getCurrentStage()->isPassable(pos.x, pos.y, pos.z - 1))
-						z = -1;
-					else
-						return;
-				}
-				else while (Game::getCurrentStage()->isPassable(pos.x + x, pos.y + y, pos.z + z + 1) && Game::getCurrentStage()->isEmpty(pos.x + x, pos.y + y, pos.z + z) && z < 256)
-					z++;
-
-				float speed = 0.25f;
-				int i;
-
-				if (z < 0)
-					for (i = 0; i < 1 / speed; i++)
-					{
-						Game::getPlayer()->move(0, 0, z * speed);
-						Game::getWindow()->redraw();
-					}
-
-				for (i = 0; i < 1 / speed; i++)
-				{
-					Game::getPlayer()->move(x * speed, y * speed, 0);
-					Game::getWindow()->redraw();
-				}
-
-				if (z > 0)
-					for (i = 0; i < z / speed; i++)
-					{
-						Game::getPlayer()->move(0, 0, speed);
-						Game::getWindow()->redraw();
-					}
+				Game::getPlayer()->move(x, y);
 			}
 		}
 	}
@@ -187,14 +168,15 @@ namespace Iso
 		{
 			if (strcmp(writing, Game::getCurrentStage()->getPassword()) == 0)
 			{
-				Game::changeStage(Game::getCurrentStage()->getNext());
-				Game::getPlayer()->moveTo(2, 2, 0);
+				Game::getCurrentStage()->onCorrect();
 
 				writing_i = 0;
 				writing[writing_i] = 0;
 			}
 			else
 			{
+				Game::getCurrentStage()->onWrong(writing);
+
 				glfwSetWindowTitle(w, "NOT THAT");
 				std::this_thread::sleep_for(std::chrono::seconds(1));
 				glfwSetWindowTitle(w, old_title);
@@ -205,6 +187,9 @@ namespace Iso
 		}
 	}
 
+	/// <summary>
+	/// Flag de arrasto da janela
+	/// </summary>
 	bool dragging = false;
 
 	/// <summary>
@@ -223,9 +208,10 @@ namespace Iso
 				dragging = false;
 	}
 
+	/// <summary>
+	/// Posição do cursor na tela (não utilizado)
+	/// </summary>
 	point2d cursorpos;
-
-	double angle = 0.0;
 
 	/// <summary>
 	/// Evento de movimento do mouse
@@ -238,7 +224,20 @@ namespace Iso
 		cursorpos = { x, y };
 	}
 
+	/// <summary>
+	/// Posição da janela na tela
+	/// </summary>
 	point2i windowpos = { 0, 0 };
+
+	/// <summary>
+	/// Contador
+	/// </summary>
+	int dc = 0;
+
+	/// <summary>
+	/// Frases
+	/// </summary>
+	const char* phrases[] = { "STOP", "YOU DON'T CONTROL ME", "I'M TELLING YOU", "DIE"};
 
 	/// <summary>
 	/// Evento de movimento da janela
@@ -248,11 +247,14 @@ namespace Iso
 	/// <param name="y">Posição Y da janela</param>
 	void windowmove_callback(GLFWwindow* w, int x, int y)
 	{
-		glScalef(1 / .05, 1 / .05,  1);
-		glTranslatef((windowpos.x - x) / (float)ISO_WINDOW_WIDTH * 2, (windowpos.y - y) / (float)ISO_WINDOW_HEIGHT * 2, 0);
-		glScalef(.05, .05, 1);
+		const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		glfwSetWindowPos(w, mode->width / 2 - ISO_WINDOW_WIDTH / 2, mode->height / 2 - ISO_WINDOW_HEIGHT / 2);
 
-		Game::getWindow()->update();
+		glfwSetWindowTitle(w, phrases[dc / 2000 % 4]);
+		dc++;
+
+		if (dc >= 8000)
+			exit(666);
 
 		windowpos = { x, y };
 	}
@@ -283,7 +285,6 @@ namespace Iso
 		}
 
 		// Centraliza a janela
-		point2i screenSize;
 		const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		windowpos.x = mode->width / 2 - ISO_WINDOW_WIDTH / 2;
 		windowpos.y = mode->height / 2 - ISO_WINDOW_HEIGHT / 2;
@@ -317,8 +318,7 @@ namespace Iso
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-
-		glScalef(.05, -.05, .05);
+		glScalef(.05f * ISO_WINDOW_HEIGHT / ISO_WINDOW_WIDTH, -.05f, .05f);
 		glPushMatrix();
 	}
 
@@ -342,10 +342,22 @@ namespace Iso
 	/// <summary>
 	/// Atualiza a janela do jogo
 	/// </summary>
-	void GameWindow::update(void)
+	/// <param name="poll">Flag para tratar os eventos da janela</param>
+	void GameWindow::update(bool poll)
 	{
+		dc = 0;
+
+		if (writing_i == 0)
+			glfwSetWindowTitle(_glfwWindow, old_title);
+		else
+			glfwSetWindowTitle(_glfwWindow, writing);
+
+		Game::getCurrentStage()->update();
+		Game::getWorld()->update();
 		redraw();
-		glfwPollEvents();
+
+		if (poll)
+			glfwPollEvents();
 	}
 
 	/// <summary>
@@ -362,7 +374,7 @@ namespace Iso
 		glRotatef(angleY, 0, 1, 0);
 		glRotatef(angleZ, 0, 0, 1);
 
-		Game::getCurrentStage()->render();
+		Game::getWorld()->render();
 
 		glPopMatrix();
 

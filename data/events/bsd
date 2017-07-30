@@ -1,2 +1,0 @@
-say("Not nice mate", ">:(", 0, 0);
-die();

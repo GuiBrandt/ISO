@@ -2,19 +2,18 @@
 #include <map>
 #include <vector>
 
+#define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
-
-#include <shiro.h>
 
 /// <summary>
 /// Largura da janela do jogo
 /// </summary>
-#define ISO_WINDOW_WIDTH 480
+#define ISO_WINDOW_WIDTH 640
 
 /// <summary>
 /// Altura da janela do jogo
 /// </summary>
-#define ISO_WINDOW_HEIGHT 480
+#define ISO_WINDOW_HEIGHT  640
 
 /// <summary>
 /// Estrutura para um ponto 2D
@@ -99,7 +98,7 @@ namespace Iso
             ~GameWindow(void);
 
             bool shouldClose(void);
-            void update(void);
+            void update(bool = true);
 			void redraw(void);
 
 			point2i getPosition(void);
@@ -115,36 +114,17 @@ namespace Iso
     {
         public:
             static void initialize(void);
-    };
-
-	/// <summary>
-	/// Enumerador de tipos de Tile
-	/// </summary>
-	enum TileType
-	{
-		Wall  = 0,
-		Floor = 1
 	};
 
 	/// <summary>
-	/// Estrutura para uma especificação de Tile
+	/// Classe para os modelos 3D do jogo
 	/// </summary>
-	struct Tile
+	class Models 
 	{
-		TileType type;
-		RGB color;
-	};
-
-	/// <summary>
-	/// Classe para camadas do mapa
-	/// </summary>
-	struct MapLayer
-	{
-		GLfloat originX;
-		GLfloat originY;
-		GLfloat originZ;
-
-		char* map;
+		public:
+			static const GLfloat CHARACTER[];
+			static const GLfloat FLOOR[];
+			static const GLfloat WALL[];
 	};
 
 	/// <summary>
@@ -153,48 +133,35 @@ namespace Iso
 	class GameObject
 	{
 		protected:
-			GLfloat _x;
-			GLfloat _y;
-			GLfloat _z;
-
-		public:
-			point3f getPosition(void);
-			void move(GLfloat, GLfloat, GLfloat);
-			void moveTo(GLfloat, GLfloat, GLfloat);
-	};
-
-	/// <summary>
-	/// Classe para os modelos 3D do jogo
-	/// </summary>
-	class Models {
-		public:
-			static const float CHARACTER[];
-			static const float FLOOR[];
-			static const float WALL[];
-	};
-
-	/// <summary>
-	/// Classe para o jogador
-	/// </summary>
-	class Player : public GameObject
-	{
-	};
-
-	/// <summary>
-	/// Classe para os eventos
-	/// </summary>
-	class Event : public GameObject
-	{
-		private:
-			const char* _script;
+			point3f _position;
+			point3f _desiredPosition;
 			RGB _color;
 			bool _visible;
 
+			const GLfloat* _model;
+			int _vertexCount;
+			
 		public:
-			Event(const char*, RGB);
-			~Event(void);
+			GameObject(point3f, RGB, const GLfloat*, int);
 
-			void start(void);
+			point3f getPosition(void);
+			void setPosition(point3f);
+
+			void move(int, int);
+			void moveTo(int, int);
+
+			virtual void onCollided(GameObject*) {}
+			virtual void onHit(GameObject*) {}
+			virtual void onInteraction(GameObject*) {}
+
+			virtual bool isPassable(void) { return false; }
+			virtual bool isPlayer(void) { return false; }
+			virtual bool isEvent(void) { return false; }
+			virtual bool isTile(void) { return false; }
+
+			void update(void);
+
+			const GLfloat* getModel(int&);
 
 			RGB getColor(void);
 			void setColor(RGB);
@@ -202,46 +169,97 @@ namespace Iso
 			void show(void);
 			void hide(void);
 
-			bool isVisible();
+			bool isVisible(void);
 	};
 
 	/// <summary>
-	/// Classe para um estágio do jogo
+	/// Enumerador de tipos de Tile
+	/// </summary>
+	enum TileType
+	{
+		Wall = 0,
+		Floor = 1
+	};
+
+	/// <summary>
+	/// Classe para os tiles
+	/// </summary>
+	class Tile : public GameObject {
+		private:
+			TileType _type;
+
+		public:
+			Tile(point3f, RGB, TileType);
+
+			bool isPassable(void) override;
+			bool isTile(void) override;
+	};
+
+	/// <summary>
+	/// Classe para o jogador
+	/// </summary>
+	class Player : public GameObject {
+		public:
+			Player();
+
+			bool isPlayer(void) override;
+	};
+
+	/// <summary>
+	/// Classe para os eventos
+	/// </summary>
+	class Event : public GameObject {
+		public:
+			Event(point3f, RGB);
+
+			bool isEvent(void) override;
+			virtual void run() {};
+	};
+
+	/// <summary>
+	/// Classe abstrata para um estágio do jogo
 	/// </summary>
 	class Stage
+	{
+		public:
+			virtual void setup(void) {};
+			virtual void update(void) {};
+			virtual void onCorrect(void) {};
+			virtual void onWrong(const char*) {};
+			virtual const char* getPassword(void) { return NULL; };
+	};
+
+	/// <summary>
+	/// Classe para o mundo do jogo
+	/// </summary>
+	class World
 	{
 		private:
 			int _xSize;
 			int _ySize;
 
 			RGB _bgColor;
-			RGB _playerColor;
 
 			RGBA _ambientLightColor;
 			RGBA _diffuseLightColor;
 
 			point4f _lightOrigin;
 
-			std::map<char, Tile> _tiles;
-			std::map<point3i, Event*> _events;
-
-			std::vector<MapLayer> _layers;
-
-			const char* _password;
-			const char* _next;
+			std::vector<GameObject*> _objects;
 
 		public:
-			Stage(const char*);
-			~Stage(void);
+			void add(GameObject*);
+			void remove(GameObject*);
+			void clear(void);
 
+			void update(void);
 			void render(void);
-			bool isPassable(int, int, int);
-			bool isEmpty(int, int, int);
+			bool isPassable(int, int, int, GameObject** = NULL);
+			bool isEmpty(int, int, int, GameObject** = NULL);
 			Event* eventAt(int, int, int);
-			
-			void setPassword(const char*, const char*);
-			const char* getPassword(void);
-			const char* getNext(void);
+
+			RGB getBackgroundColor(void);
+			void setBackgroundColor(RGB);
 
 			RGBA getAmbientLight(void);
 			void setAmbientLight(RGBA);
@@ -260,9 +278,9 @@ namespace Iso
 		private:
 			static Player _player;
 			static Stage* _currentStage;
+			static World* _world;
 			static Event* _currentEvent;
 			static GameWindow* _window;
-			static shiro_runtime* _scriptRuntime;
 
 		public:
 			static void initialize(void);
@@ -272,70 +290,13 @@ namespace Iso
 
 			static Player* getPlayer(void);
 
+			static World* getWorld(void);
+
 			static Stage* getCurrentStage(void);
-			static void changeStage(const char*);
+			static Stage* getFirstStage(void);
+			static void changeStage(Stage*);
 
 			static Event* getCurrentEvent();
 			static void setCurrentEvent(Event*);
-
-			static void runScript(const char*);
 	};
-
-	//
-	//	Funções dos eventos
-	//
-
-	// Muda o título da janela
-	shiro_native(setTitle);
-
-	// Define a senha da fase
-	shiro_native(setPass);
-
-	// Muda de fase
-	shiro_native(changeStage);
-
-	// Mostra uma mensagem
-	shiro_native(say);
-
-	// Mostra o evento atual
-	shiro_native(show);
-	
-	// Esconde o evento atual
-	shiro_native(hide);
-
-	// Verifica se o evento atual está visível
-	shiro_native(eventIsVisible);
-
-	// Muda a cor da luz ambiente
-	shiro_native(setAmbientLight);
-
-	// Muda a cor da luz difusa
-	shiro_native(setDiffuseLight);
-
-	// Muda a posição da luz
-	shiro_native(setLightPosition);
-
-	// Obtém a cor da luz ambiente
-	shiro_native(getAmbientLight);
-
-	// Obtém a cor da luz difusa
-	shiro_native(getDiffuseLight);
-
-	// Obtém a posição da luz
-	shiro_native(getLightX);
-	shiro_native(getLightY);
-	shiro_native(getLightZ);
-	shiro_native(getLightW);
-
-	// Move o evento
-	shiro_native(move);
-
-	// RIP
-	shiro_native(die);
-
-	// Executa uma tarefa em uma thread
-	shiro_native(threadDo);
-
-	// Define um timeout
-	shiro_native(setTimeout);
 };

@@ -77,11 +77,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\5 - Utils\glfw-3.2.1\include;$(ProjectDir)boxer\include;$(ProjectDir)shiro\include;$(ProjectDir)src\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\5 - Utils\glfw-3.2.1\include;$(ProjectDir)boxer\include;$(ProjectDir)src\include</AdditionalIncludeDirectories>
       <AdditionalOptions>/NODEFAULTLIB:MSVCRT %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(ProjectDir)..\..\5 - Utils\glfw-3.2.1\lib-vc2015\glfw3.lib;$(ProjectDir)shiro\libshiro.a;$(ProjectDir)boxer\boxer.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)..\..\5 - Utils\glfw-3.2.1\lib-vc2015\glfw3.lib;$(ProjectDir)boxer\boxer.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>NotSet</SubSystem>
     </Link>
   </ItemDefinitionGroup>
@@ -128,7 +128,10 @@
     <ClCompile Include="src\classes\GameObject.cpp" />
     <ClCompile Include="src\classes\GameWindow.cpp" />
     <ClCompile Include="src\classes\Models.cpp" />
-    <ClCompile Include="src\classes\Stage.cpp" />
+    <ClCompile Include="src\classes\Player.cpp" />
+    <ClCompile Include="src\classes\Stages.cpp" />
+    <ClCompile Include="src\classes\Tile.cpp" />
+    <ClCompile Include="src\classes\World.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -14,6 +14,11 @@ namespace Iso
 	Stage* Game::_currentStage;
 
 	/// <summary>
+	/// Mundo do jogo
+	/// </summary>
+	World* Game::_world;
+
+	/// <summary>
 	/// Evento em execução
 	/// </summary>
 	Event* Game::_currentEvent = nullptr;
@@ -24,45 +29,15 @@ namespace Iso
 	GameWindow* Game::_window;
 
 	/// <summary>
-	/// Runtime do Shiro
-	/// </summary>
-	shiro_runtime* Game::_scriptRuntime;
-
-	/// <summary>
 	/// Inicialização do módulo do jogo
 	/// </summary>
 	void Game::initialize()
 	{
-		// Inicialização do Shiro
-		_scriptRuntime = shiro_init();
-
-		shiro_def_native(_scriptRuntime, setTitle, 1);
-		shiro_def_native(_scriptRuntime, setPass, 2);
-		shiro_def_native(_scriptRuntime, changeStage, 1);
-		shiro_def_native(_scriptRuntime, say, 4);
-		shiro_def_native(_scriptRuntime, show, 0);
-		shiro_def_native(_scriptRuntime, hide, 0);
-		shiro_def_native(_scriptRuntime, eventIsVisible, 0);
-		shiro_def_native(_scriptRuntime, setAmbientLight, 4);
-		shiro_def_native(_scriptRuntime, setDiffuseLight, 4);
-		shiro_def_native(_scriptRuntime, setLightPosition, 4);
-		shiro_def_native(_scriptRuntime, getAmbientLight, 0);
-		shiro_def_native(_scriptRuntime, getDiffuseLight, 0);
-		shiro_def_native(_scriptRuntime, getLightX, 0);
-		shiro_def_native(_scriptRuntime, getLightY, 0);
-		shiro_def_native(_scriptRuntime, getLightZ, 0);
-		shiro_def_native(_scriptRuntime, getLightW, 0);
-		shiro_def_native(_scriptRuntime, move, 3);
-		shiro_def_native(_scriptRuntime, die, 0);
-		shiro_def_native(_scriptRuntime, threadDo, 1);
-		shiro_def_native(_scriptRuntime, setTimeout, 2);
-
 		// Objetos do jogo
 		_window = new GameWindow();
+		_world = new World();
 
-		changeStage("test");
-
-		_player.moveTo(2, 2, 0);
+		changeStage(getFirstStage());
 	}
 
 	/// <summary>
@@ -96,27 +71,35 @@ namespace Iso
 	/// <summary>
 	/// Obtém o estágio atual do jogo
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>O estágio atual do jogo</returns>
 	Stage* Game::getCurrentStage()
 	{
 		return _currentStage;
 	}
 
 	/// <summary>
+	/// Obtém o mundo do jogo
+	/// </summary>
+	/// <returns>Instância do mundo do jogo</returns>
+	World* Game::getWorld()
+	{
+		return _world;
+	}
+
+	/// <summary>
 	/// Muda o estágio atual do jogo
 	/// </summary>
-	/// <param name="name">Nome do estágio</param>
-	void Game::changeStage(const char* name)
+	/// <param name="stage">Estágio</param>
+	void Game::changeStage(Stage* stage)
 	{
 		if (_currentStage)
+		{
+			_world->clear();
 			delete _currentStage;
+		}
 
-		_currentStage = new Stage(name);
-
-		std::string ename = name;
-		ename += "-init";
-
-		Event(ename.c_str(), RGB{ 0, 0, 0 }).start();
+		_currentStage = stage;
+		_currentStage->setup();
 	}
 
 	/// <summary>
@@ -135,22 +118,5 @@ namespace Iso
 	void Game::setCurrentEvent(Event* ev)
 	{
 		_currentEvent = ev;
-	}
-
-	/// <summary>
-	/// Executa um script
-	/// </summary>
-	/// <param name="code">Código que será executado</param>
-	void Game::runScript(const char* code)
-	{
-		char* c = (char*)calloc(strlen(code) + 1, sizeof(char));
-		memcpy_s(c, strlen(code) + 1, code, strlen(code));
-
-		shiro_binary* bin = shiro_compile(c);
-
-		if (bin != NULL)
-			shiro_execute(_scriptRuntime, bin);
-		else
-			fprintf(stderr, "%s\n", shiro_get_last_error());
 	}
 };

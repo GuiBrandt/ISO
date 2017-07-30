@@ -41,10 +41,19 @@
     <ClCompile Include="src\classes\GameObject.cpp">
       <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
-    <ClCompile Include="src\classes\Stage.cpp">
+    <ClCompile Include="src\classes\Models.cpp">
       <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
-    <ClCompile Include="src\classes\Models.cpp">
+    <ClCompile Include="src\classes\World.cpp">
+      <Filter>Arquivos de Origem\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Player.cpp">
+      <Filter>Arquivos de Origem\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Stages.cpp">
+      <Filter>Arquivos de Origem\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\classes\Tile.cpp">
       <Filter>Arquivos de Origem\classes</Filter>
     </ClCompile>
   </ItemGroup>

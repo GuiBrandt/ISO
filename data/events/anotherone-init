@@ -1,4 +1,0 @@
-setTitle("NOW DON'T");
-setTimeout(10000, fn() { 
-	changeStage("goodboy")
-});
